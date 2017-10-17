@@ -9,7 +9,7 @@ namespace Cookbook.DataModel
     public class Recipe //H
     {
         public int Id { get; set; }
-        public RecipeCategory Category { get; set; }
+        public Category RecipeCategory { get; set; }
         public string Title { get; set; }
         public string Instruction { get; set; }
         public int Time { get; set; }//Time in minutes

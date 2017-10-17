@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cookbook.DataModel
 {
-    public class RecipeCategory //H
+    public class Category //H
     {
         public int Id { get; set; }
         public string Title { get; set; }
