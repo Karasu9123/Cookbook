@@ -109,27 +109,16 @@ namespace Cookbook.DataAccess
 
         public void AddIngredientCategory(string title) //H
         {
-            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
-            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
-            {
-                connection.ConnectionString = _connectionString;
-                connection.Open();
-
-                using (SQLiteCommand cmd = new SQLiteCommand(connection))
-                {
-                    cmd.CommandText = @"INSERT INTO IngredientCategory (Title)
-                                            VALUES (@title)
-                                            ";
-                    cmd.Parameters.AddWithValue("@title", title);
-                    cmd.ExecuteNonQuery();
-
-                }
-                connection.Close();
-            }
+            AddCategory(title, "IngredientCategory");
         }
 
         public void AddRecipeCategory(string title) //H
         {
+            AddCategory(title, "RecipeCategory");
+        }
+
+        public void AddCategory(string title, string table) //H
+        {
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
             {
@@ -138,10 +127,11 @@ namespace Cookbook.DataAccess
 
                 using (SQLiteCommand cmd = new SQLiteCommand(connection))
                 {
-                    cmd.CommandText = @"INSERT INTO RecipeCategory (Title)
+                    cmd.CommandText = @"INSERT INTO @table (Title)
                                             VALUES (@title)
                                             ";
                     cmd.Parameters.AddWithValue("@title", title);
+                    cmd.Parameters.AddWithValue("@table", table);
                     cmd.ExecuteNonQuery();
 
                 }
@@ -149,38 +139,19 @@ namespace Cookbook.DataAccess
             }
         }
 
+
         public List<Category> GetAllIngredientCategory() //H
         {
-            List<Category> result = new List<Category>();
-            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
-            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
-            {
-                connection.ConnectionString = _connectionString;
-                connection.Open();
-
-                using (SQLiteCommand cmd = new SQLiteCommand(connection))
-                {
-                    cmd.CommandText = @"SELECT Id, Title FROM IngredientCategory";
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var category = new Category
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                Title = reader.GetString(reader.GetOrdinal("Title"))
-                            };
-                            result.Add(category);
-                        }
-                    }
-                }
-                connection.Close();
-            }
-            return result;
+            return GetAllCategory("IngredientCategory");
         }
 
         public List<Category> GetAllRecipeCategory() //H
         {
+            return GetAllCategory("RecipeCategory");
+        }
+
+        public List<Category> GetAllCategory(string table) //H
+        {
             List<Category> result = new List<Category>();
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
@@ -190,7 +161,8 @@ namespace Cookbook.DataAccess
 
                 using (SQLiteCommand cmd = new SQLiteCommand(connection))
                 {
-                    cmd.CommandText = @"SELECT Id, Title FROM RecipeCategory";
+                    cmd.CommandText = @"SELECT Id, Title FROM @table";
+                    cmd.Parameters.AddWithValue("@table", table);
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
