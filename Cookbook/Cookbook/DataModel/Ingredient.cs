@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,11 @@ namespace Cookbook.DataModel
         public int Calories { get; set; }
         public int Quantity { get; set; }
         public string Unit { get; set; }//Единицы измерения
-        public byte[] Image { get; set; }
+        public byte[] Picture { get; set; }
+
+        public Image GetImage()
+        {
+            return (Bitmap)((new ImageConverter()).ConvertFrom(Picture));
+        }
     }
 }
