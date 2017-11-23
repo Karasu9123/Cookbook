@@ -12,8 +12,12 @@ namespace Cookbook.DataModel
         public Category RecipeCategory { get; set; }
         public string Title { get; set; }
         public string Instruction { get; set; }
-        public int Time { get; set; }//Time in minutes
+        /// <summary>
+        /// Time in minutes
+        /// </summary>
+        public int Time { get; set; }
         public List<Ingredient> Ingredients { get; set; }
+        public List<RecipeImage> Pictures { get; set; }
 
     }
 }

@@ -10,7 +10,7 @@ namespace Cookbook.DataModel
     public class RecipeImage //H
     {
         public int Id { get; set; }
-        public int NumberOfImage { get; set; }
+        public int NumberOfPicture { get; set; }
         public byte[] Picture { get; set; }
 
         public Image GetImage()
