@@ -11,6 +11,7 @@ namespace Cookbook
     public partial class MainForm : Form
     {
         string dbName = "Cookbook.db3";
+        string testDB = "TestDB.db3";
         string dbPath = Path.GetDirectoryName(Path.GetDirectoryName(Application.StartupPath)) + @"\";
         IDataRepository db;
 
@@ -18,7 +19,27 @@ namespace Cookbook
         public MainForm()
         {
             InitializeComponent();
-            db = new DataRepository(dbPath + dbName);
+            //db = new DataRepository(dbPath + dbName);
+            db = new DataRepository(dbPath + testDB);
+
+            #region Test data
+            db.CreateDataBase();
+            db.AddRecipeCategory("Жареные блюда");
+            db.AddRecipeCategory("Вегетарианские блюда");
+            db.AddRecipeCategory("Мясные блюда");
+
+            db.AddIngredientCategory("Алкоголь");
+            db.AddIngredientCategory("Фастфуд");
+            db.AddIngredientCategory("Овощи");
+            db.AddIngredientCategory("Мясо");
+            db.AddIngredientCategory("Молочные продукты");
+
+            db.AddIngredient(1, "Вино", 100, null);
+            db.AddIngredient(2, "Мивина", 100, null);
+            db.AddIngredient(3, "Огурцы", 100, null);
+            db.AddIngredient(4, "Курица", 100, null);
+            db.AddIngredient(5, "Сыр", 100, null);
+            #endregion
 
             ///Set IngredientCategories.
             var ingredientCategories = db.GetAllIngredientCategory();
@@ -201,6 +222,7 @@ namespace Cookbook
                 listIngredients.Items.Add(ingredient, inFridge);
             }
 
+            listIngredients.DisplayMember = "Title";
             listIngredients.Refresh();
         }
 

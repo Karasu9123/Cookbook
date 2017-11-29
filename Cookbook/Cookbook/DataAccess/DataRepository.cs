@@ -589,7 +589,7 @@ namespace Cookbook.DataAccess
         {
             return GetAllCategory("IngredientCategory");
         }
-        public List<Category> GetAllCategory(string table)
+        private List<Category> GetAllCategory(string table)
         {
             List<Category> result = new List<Category>();
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
@@ -618,6 +618,7 @@ namespace Cookbook.DataAccess
             }
             return result;
         }
+
         public Category GetRecipeCategory(int id)
         {
             return GetCategory(id, "RecipeCategory");
@@ -657,9 +658,10 @@ namespace Cookbook.DataAccess
             }
             return result;
         }
+
         public Ingredient GetIngredient(int id)
         {
-            Ingredient result;
+            Ingredient result = null;
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
             {
@@ -677,21 +679,23 @@ namespace Cookbook.DataAccess
                     cmd.Parameters.AddWithValue("@id", id);
                     using (var reader = cmd.ExecuteReader())
                     {
-                        reader.Read();
-                        Category ingredientCategory = new Category
+                        if (reader.Read())
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
-                            Title = reader.GetString(reader.GetOrdinal("CategoryTitle"))
-                        };
+                            Category ingredientCategory = new Category
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                                Title = reader.GetString(reader.GetOrdinal("CategoryTitle"))
+                            };
 
-                        result = new Ingredient
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("IngredientsId")),
-                            Category = ingredientCategory,
-                            Title = reader.GetString(reader.GetOrdinal("IngredientTitle")),
-                            Calories = reader.GetInt32(reader.GetOrdinal("Kilocalories")),
-                            Picture = reader["Picture"] as byte[]
-                        };
+                            result = new Ingredient
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("IngredientsId")),
+                                Category = ingredientCategory,
+                                Title = reader.GetString(reader.GetOrdinal("IngredientTitle")),
+                                Calories = reader.GetInt32(reader.GetOrdinal("Kilocalories")),
+                                Picture = reader["Picture"] as byte[]
+                            };
+                        }
 
                     }
                 }
@@ -770,15 +774,16 @@ namespace Cookbook.DataAccess
                     cmd.Parameters.AddWithValue("@categoryId", categoryId);
                     using (var reader = cmd.ExecuteReader())
                     {
-
-                        Category ingredientCategory = new Category
-                        {
-                            Id = categoryId,
-                            Title = reader.GetString(reader.GetOrdinal("CategoryTitle"))
-                        };
-
+                        string temp;
                         while (reader.Read())
                         {
+                            temp = reader.GetString(reader.GetOrdinal("CategoryTitle"));
+                            Category ingredientCategory = new Category
+                            {
+                                Id = categoryId,
+                                Title = temp
+                            };
+
                             var ingredient = new Ingredient
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("IngredientsId")),
@@ -899,21 +904,151 @@ namespace Cookbook.DataAccess
             List<Recipe> result = recipes.Where(i => i.Title.ToUpper().Contains(title.ToUpper())).ToList();
             return result;
         }
+        //not tested
+        public List<Recipe> GetRecipes(int time)
+        {
+            List<Recipe> result = null;
+            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
+            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
+            {
+                connection.ConnectionString = _connectionString;
+                connection.Open();
+
+                using (SQLiteCommand cmd = new SQLiteCommand(connection))
+                {
+                    cmd.CommandText = @"SELECT Recipes.Id AS RecipesId, RecipeCategory.Id AS CategoryId, 
+                                               RecipeCategory.Title AS CategoryTitle, Recipes.Title AS RecipesTitle,
+                                               Recipes.Description, Recipes.Time, Recipes.Picture, Recipes.Instructions  
+                                        FROM Recipes INNER JOIN RecipeCategory ON Recipes.RecipeCategoryId = RecipeCategory.Id
+                                        WHERE Recipes.Time <= @time
+                                        ;";
+                    cmd.Parameters.AddWithValue("@time", time);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Category recipeCategory = new Category
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                                Title = reader.GetString(reader.GetOrdinal("CategoryTitle"))
+                            };
+
+                            Recipe temp = new Recipe
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("RecipesId")),
+                                Category = recipeCategory,
+                                Title = reader.GetString(reader.GetOrdinal("RecipesTitle")),
+                                Description = reader.GetString(reader.GetOrdinal("Description")),
+                                Time = reader.GetInt32(reader.GetOrdinal("Time")),
+                                Picture = reader["Picture"] as byte[],
+                                Instruction = reader.GetString(reader.GetOrdinal("Instructions"))
+                            };
+                            temp.Ingredients = GetIngredientsOfRecipe(temp.Id);
+                            result.Add(temp);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return result;
+        }
+        //not tested
+        public List<Recipe> GetRecipesOfCategory(int categoryId)
+        {
+            List<Recipe> result = null;
+            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
+            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
+            {
+                connection.ConnectionString = _connectionString;
+                connection.Open();
+
+                using (SQLiteCommand cmd = new SQLiteCommand(connection))
+                {
+                    cmd.CommandText = @"SELECT Recipes.Id AS RecipesId, RecipeCategory.Id AS CategoryId, 
+                                               RecipeCategory.Title AS CategoryTitle, Recipes.Title AS RecipesTitle,
+                                               Recipes.Description, Recipes.Time, Recipes.Picture, Recipes.Instructions  
+                                        FROM Recipes INNER JOIN RecipeCategory ON Recipes.RecipeCategoryId = RecipeCategory.Id
+                                        WHERE RecipeCategory.Id = @categoryId
+                                        ;";
+                    cmd.Parameters.AddWithValue("@categoryId", categoryId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Category recipeCategory = new Category
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                                Title = reader.GetString(reader.GetOrdinal("CategoryTitle"))
+                            };
+
+                            Recipe temp = new Recipe
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("RecipesId")),
+                                Category = recipeCategory,
+                                Title = reader.GetString(reader.GetOrdinal("RecipesTitle")),
+                                Description = reader.GetString(reader.GetOrdinal("Description")),
+                                Time = reader.GetInt32(reader.GetOrdinal("Time")),
+                                Picture = reader["Picture"] as byte[],
+                                Instruction = reader.GetString(reader.GetOrdinal("Instructions"))
+                            };
+                            temp.Ingredients = GetIngredientsOfRecipe(temp.Id);
+                            result.Add(temp);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return result;
+        }
+        //not tested
+        public List<Recipe> GetAllRecipe()
+        {
+            List<Recipe> result = null;
+            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
+            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
+            {
+                connection.ConnectionString = _connectionString;
+                connection.Open();
+
+                using (SQLiteCommand cmd = new SQLiteCommand(connection))
+                {
+                    cmd.CommandText = @"SELECT Recipes.Id AS RecipesId, RecipeCategory.Id AS CategoryId, 
+                                               RecipeCategory.Title AS CategoryTitle, Recipes.Title AS RecipesTitle,
+                                               Recipes.Description, Recipes.Time, Recipes.Picture, Recipes.Instructions  
+                                        FROM Recipes INNER JOIN RecipeCategory ON Recipes.RecipeCategoryId = RecipeCategory.Id
+                                        ;";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Category recipeCategory = new Category
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                                Title = reader.GetString(reader.GetOrdinal("CategoryTitle"))
+                            };
+
+                            Recipe temp = new Recipe
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("RecipesId")),
+                                Category = recipeCategory,
+                                Title = reader.GetString(reader.GetOrdinal("RecipesTitle")),
+                                Description = reader.GetString(reader.GetOrdinal("Description")),
+                                Time = reader.GetInt32(reader.GetOrdinal("Time")),
+                                Picture = reader["Picture"] as byte[],
+                                Instruction = reader.GetString(reader.GetOrdinal("Instructions"))
+                            };
+                            temp.Ingredients = GetIngredientsOfRecipe(temp.Id);
+                            result.Add(temp);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return result;
+        }
         #endregion
 
         #region Not implemented  
-        public List<Recipe> GetRecipes(int time)
-        {
-            throw new NotImplementedException();
-        }
-        public List<Recipe> GetRecipesOfCategory(int categoryId)
-        {
-            throw new NotImplementedException();
-        }
-        public List<Recipe> GetAllRecipe()
-        {
-            throw new NotImplementedException();
-        }
         public List<Recipe> GetRecipesFromIngredients(List<Ingredient> ingredients)
         {
             throw new NotImplementedException();
