@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
@@ -55,9 +54,9 @@ namespace Cookbook.DataAccess
                     #region Ingredients
                     cmd.CommandText = @"CREATE TABLE IF NOT EXISTS Ingredients (
                                             Id                     INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                            IngredientCategoryId   INTEGER,
+                                            IngredientCategoryId   INTEGER NOT NULL,
                                             Title                  TEXT NOT NULL,
-                                            Kilocalories           INTEGER,
+                                            Kilocalories           INTEGER NOT NULL,
                                             Picture                BLOB,
                                             FOREIGN KEY(IngredientCategoryId) REFERENCES IngredientCategory(Id)
                                             );";
@@ -68,23 +67,13 @@ namespace Cookbook.DataAccess
                     #region Recipes
                     cmd.CommandText = @"CREATE TABLE IF NOT EXISTS Recipes (
                                             Id               INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                            RecipeCategoryId INTEGER,
+                                            RecipeCategoryId INTEGER NOT NULL,
                                             Title            TEXT NOT NULL,
+                                            Description      TEXT NOT NULL,
+                                            Time             INTEGER NOT NULL,
+                                            Picture          BLOB NOT NULL,
                                             Instructions     TEXT NOT NULL,
-                                            Time             INTEGER,
                                             FOREIGN KEY(RecipeCategoryId) REFERENCES RecipeCategory(Id)
-                                            );";
-                    cmd.CommandType = CommandType.Text;
-                    cmd.ExecuteNonQuery();
-                    #endregion
-
-                    #region RecipesPicture
-                    cmd.CommandText = @"CREATE TABLE IF NOT EXISTS RecipesPictures (
-                                            Id              INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                                            NumberOfPicture INTEGER NOT NULL,
-                                            RecipeId        INTEGER NOT NULL,
-                                            Picture         BLOB NOT NULL,
-                                            FOREIGN KEY(RecipeId) REFERENCES Recipes(Id)
                                             );";
                     cmd.CommandType = CommandType.Text;
                     cmd.ExecuteNonQuery();
@@ -165,7 +154,7 @@ namespace Cookbook.DataAccess
             }
         }
         //not tested
-        public void AddRecipe(int recipeCategoryId, string title, string instructions, int time)
+        public void AddRecipe(int recipeCategoryId, string title, string description, string instructions, int time, byte[] picture)
         {
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
@@ -175,17 +164,16 @@ namespace Cookbook.DataAccess
 
                 using (SQLiteCommand cmd = new SQLiteCommand(connection))
                 {
-                    cmd.CommandText = @"PRAGMA foreign_keys = ON;";
-                    cmd.CommandType = CommandType.Text;
-                    cmd.ExecuteNonQuery();
-
-                    cmd.CommandText = @"INSERT INTO Recipes (RecipeCategoryId, Title, Instructions, Time)
-                                        VALUES (@recipeCategoryId, @title, @instructions, @time)
+                    cmd.CommandText = @"INSERT INTO Recipes (RecipeCategoryId, Title, Description, Time, Picture, Instructions)
+                                        VALUES (@recipeCategoryId, @title, @description, @time, @picture, @instructions)
                                         ;";
                     cmd.Parameters.AddWithValue("@recipeCategoryId", recipeCategoryId);
                     cmd.Parameters.AddWithValue("@title", title);
-                    cmd.Parameters.AddWithValue("@instructions", instructions);
+                    cmd.Parameters.AddWithValue("@description", description);
                     cmd.Parameters.AddWithValue("@time", time);
+                    cmd.Parameters.AddWithValue("@picture", picture);
+                    cmd.Parameters.AddWithValue("@instructions", instructions);
+                    
                     cmd.ExecuteNonQuery();
 
                 }
@@ -193,7 +181,8 @@ namespace Cookbook.DataAccess
             }
         }
         //not tested
-        public void AddRecipeWithExistingIngredients(int recipeCategoryId, string title, string instructions, int time, List<Ingredient> ingredients)
+        public void AddRecipeWithExistingIngredients(int recipeCategoryId, string title, string description, string instructions,
+            int time, byte[] picture, List<Ingredient> ingredients)
         {
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
@@ -207,13 +196,15 @@ namespace Cookbook.DataAccess
                     cmd.CommandType = CommandType.Text;
                     cmd.ExecuteNonQuery();
 
-                    cmd.CommandText = @"INSERT INTO Recipes (RecipeCategoryId, Title, Instructions, Time)
-                                            VALUES (@recipeCategoryId, @title, @instructions, @time)
+                    cmd.CommandText = @"INSERT INTO Recipes (RecipeCategoryId, Title, Description, Time, Picture, Instructions)
+                                            VALUES (@recipeCategoryId, @title, @description, @time, @picture, @instructions)
                                             ;";
                     cmd.Parameters.AddWithValue("@recipeCategoryId", recipeCategoryId);
                     cmd.Parameters.AddWithValue("@title", title);
-                    cmd.Parameters.AddWithValue("@instructions", instructions);
+                    cmd.Parameters.AddWithValue("@description", description);
                     cmd.Parameters.AddWithValue("@time", time);
+                    cmd.Parameters.AddWithValue("@picture", picture);
+                    cmd.Parameters.AddWithValue("@instructions", instructions);
                     cmd.ExecuteNonQuery();
 
                     cmd.CommandText = @"SELECT last_insert_rowid();";
@@ -257,32 +248,6 @@ namespace Cookbook.DataAccess
                     cmd.Parameters.AddWithValue("@ingredientId", ingredientId);
                     cmd.Parameters.AddWithValue("@quantity", quantity);
                     cmd.Parameters.AddWithValue("@units", units);
-                    cmd.ExecuteNonQuery();
-                }
-                connection.Close();
-            }
-        }
-        //not tested
-        public void AddRecipePicture(int recipeId, int numberOfPicture, byte[] picture)
-        {
-            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
-            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
-            {
-                connection.ConnectionString = _connectionString;
-                connection.Open();
-
-                using (SQLiteCommand cmd = new SQLiteCommand(connection))
-                {
-                    cmd.CommandText = @"PRAGMA foreign_keys = ON;";
-                    cmd.CommandType = CommandType.Text;
-                    cmd.ExecuteNonQuery();
-
-                    cmd.CommandText = @"INSERT INTO RecipesPictures (RecipeId, NumberOfPicture, Picture)
-                                        VALUES (@recipeId, @numberOfPicture, @picture)
-                                        ;";
-                    cmd.Parameters.AddWithValue("@recipeId", recipeId);
-                    cmd.Parameters.AddWithValue("@numberOfPicture", numberOfPicture);
-                    cmd.Parameters.AddWithValue("@picture", picture);
                     cmd.ExecuteNonQuery();
                 }
                 connection.Close();
@@ -377,15 +342,24 @@ namespace Cookbook.DataAccess
         {
             UpdateRecipe(recipeId, "Title", title);
         }
-        //not tested
-        public void UpdateRecipeInstructions(int recipeId, string instructions)
+        public void UpdateRecipeDescription(int recipeId, string description)
         {
-            UpdateRecipe(recipeId, "Instructions", instructions);
+            UpdateRecipe(recipeId, "Description", description);
         }
         //not tested
         public void UpdateRecipeTime(int recipeId, int time)
         {
             UpdateRecipe(recipeId, "Time", time);
+        }
+        //not tested
+        public void UpdateRecipePicture(int recipeId, byte[] picture)
+        {
+            UpdateRecipe(recipeId, "Picture", picture);
+        }
+        //not tested
+        public void UpdateRecipeInstructions(int recipeId, string instructions)
+        {
+            UpdateRecipe(recipeId, "Instructions", instructions);
         }
         //not tested
         private void UpdateRecipe<T>(int recipeId, string rowName, T value)
@@ -419,7 +393,7 @@ namespace Cookbook.DataAccess
         //not tested
         public void UpdateIngredientUnitsOnRecipe(int recipeId, int ingredientId, string units)
         {
-            UpdateIngredientRecipe(recipeId, ingredientId, "Units", units);            
+            UpdateIngredientRecipe(recipeId, ingredientId, "Units", units);
         }
         //not tested
         private void UpdateIngredientRecipe<T>(int recipeId, int ingredientId, string rowName, T value)
@@ -447,29 +421,7 @@ namespace Cookbook.DataAccess
         }
 
         //not tested
-        public void UpdateRecipePicture(int recipeId, int numberOfPicture, byte[] picture)
-        {
-            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
-            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
-            {
-                connection.ConnectionString = _connectionString;
-                connection.Open();
-
-                using (SQLiteCommand cmd = new SQLiteCommand(connection))
-                {
-                    cmd.CommandText = @"Update RecipesPictures
-                                        SET Picture = @picture 
-                                        WHERE RecipeId = @recipeId AND NumberOfPicture = @numberOfPicture
-                                        ;";
-                    cmd.Parameters.AddWithValue("@picture", picture);
-                    cmd.Parameters.AddWithValue("@recipeId", recipeId);
-                    cmd.Parameters.AddWithValue("@numberOfPicture", numberOfPicture);
-                    cmd.ExecuteNonQuery();
-
-                }
-                connection.Close();
-            }
-        }
+        
         #endregion
 
         #region Delete
@@ -491,7 +443,6 @@ namespace Cookbook.DataAccess
                     var ingredients = GetIngredientsOfCategory(id);
                     foreach (var ingredient in ingredients)
                     {
-                        DeleteLinksFromIngredientRecipe(ingredient.Id, "IngredientId", connection);
                         DeleteIngredient(ingredient.Id);//+2 new connection every iteration(
                     }
 
@@ -520,7 +471,7 @@ namespace Cookbook.DataAccess
                     cmd.ExecuteNonQuery();
 
                     var recipes = GetRecipesOfCategory(id);
-                    foreach(var recipe in recipes)
+                    foreach (var recipe in recipes)
                     {
                         DeleteRecipe(recipe.Id);//+2 new connection every iteration(
                     }
@@ -588,7 +539,7 @@ namespace Cookbook.DataAccess
         }
         //not tested
         /// <param name="id">Id of Ingredient or Recipe</param>
-        /// <param name="rowName">IngredientId or RecipeId</param>
+        /// <param name="rowName">"IngredientId" or "RecipeId"</param>
         /// <param name="openConnection"></param>
         private void DeleteLinksFromIngredientRecipe(int id, string rowName, SQLiteConnection openConnection)
         {
@@ -627,41 +578,16 @@ namespace Cookbook.DataAccess
                 connection.Close();
             }
         }
-        //not tested
-        public void DeleteRecipePicture(int recipeId, int numberOfPicture)
-        {
-            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
-            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
-            {
-                connection.ConnectionString = _connectionString;
-                connection.Open();
-
-                using (SQLiteCommand cmd = new SQLiteCommand(connection))
-                {
-                    cmd.CommandText = @"PRAGMA foreign_keys = ON;";
-                    cmd.CommandType = CommandType.Text;
-                    cmd.ExecuteNonQuery();
-
-                    cmd.CommandText = @"DELETE FROM RecipesPictures 
-                                        WHERE RecipeId = @recipeId AND NumberOfPicture = @numberOfPicture
-                                        ;";
-                    cmd.Parameters.AddWithValue("@recipeId", recipeId);
-                    cmd.Parameters.AddWithValue("@numberOfPicture", numberOfPicture);
-                    cmd.ExecuteNonQuery();
-                }
-                connection.Close();
-            }
-        }
         #endregion
 
         #region Get
-        public List<Category> GetAllIngredientCategory()
-        {
-            return GetAllCategory("IngredientCategory");
-        }
         public List<Category> GetAllRecipeCategory()
         {
             return GetAllCategory("RecipeCategory");
+        }
+        public List<Category> GetAllIngredientCategory()
+        {
+            return GetAllCategory("IngredientCategory");
         }
         public List<Category> GetAllCategory(string table)
         {
@@ -757,23 +683,22 @@ namespace Cookbook.DataAccess
                             Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
                             Title = reader.GetString(reader.GetOrdinal("CategoryTitle"))
                         };
-                        
+
                         result = new Ingredient
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("IngredientsId")),
-                            IngredientCategory = ingredientCategory,
+                            Category = ingredientCategory,
                             Title = reader.GetString(reader.GetOrdinal("IngredientTitle")),
                             Calories = reader.GetInt32(reader.GetOrdinal("Kilocalories")),
                             Picture = reader["Picture"] as byte[]
                         };
-                        
+
                     }
                 }
                 connection.Close();
             }
             return result;
         }
-
         //not tested
         public List<Ingredient> GetIngredients(string title)
         {
@@ -781,7 +706,49 @@ namespace Cookbook.DataAccess
             List<Ingredient> result = ingredients.Where(i => i.Title.ToUpper().Contains(title.ToUpper())).ToList();
             return result;
         }
+        //not tested
+        public List<Ingredient> GetAllIngredient()
+        {
+            List<Ingredient> result = new List<Ingredient>();
+            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
+            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
+            {
+                connection.ConnectionString = _connectionString;
+                connection.Open();
 
+                using (SQLiteCommand cmd = new SQLiteCommand(connection))
+                {
+                    cmd.CommandText = @"SELECT Ingredients.Id AS IngredientsId, IngredientCategory.Id AS CategoryId, 
+                                               IngredientCategory.Title AS CategoryTitle, Ingredients.Title AS IngredientTitle,
+                                               Ingredients.Kilocalories, Ingredients.Picture 
+                                        FROM Ingredients INNER JOIN IngredientCategory ON Ingredients.IngredientCategoryId = IngredientCategory.Id
+                                        ;";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Category ingredientCategory = new Category
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                                Title = reader.GetString(reader.GetOrdinal("CategoryTitle"))
+                            };
+
+                            var ingredient = new Ingredient
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("IngredientsId")),
+                                Category = ingredientCategory,
+                                Title = reader.GetString(reader.GetOrdinal("IngredientTitle")),
+                                Calories = reader.GetInt32(reader.GetOrdinal("Kilocalories")),
+                                Picture = reader["Picture"] as byte[]
+                            };
+                            result.Add(ingredient);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return result;
+        }
         //not tested
         public List<Ingredient> GetIngredientsOfCategory(int categoryId)
         {
@@ -815,7 +782,7 @@ namespace Cookbook.DataAccess
                             var ingredient = new Ingredient
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("IngredientsId")),
-                                IngredientCategory = ingredientCategory,
+                                Category = ingredientCategory,
                                 Title = reader.GetString(reader.GetOrdinal("IngredientTitle")),
                                 Calories = reader.GetInt32(reader.GetOrdinal("Kilocalories")),
                                 Picture = reader["Picture"] as byte[]
@@ -829,49 +796,7 @@ namespace Cookbook.DataAccess
             }
             return result;
         }
-        //not tested
-        public List<Ingredient> GetAllIngredient()
-        {
-            List<Ingredient> result = new List<Ingredient>();
-            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
-            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
-            {
-                connection.ConnectionString = _connectionString;
-                connection.Open();
 
-                using (SQLiteCommand cmd = new SQLiteCommand(connection))
-                {
-                    cmd.CommandText = @"SELECT Ingredients.Id AS IngredientsId, IngredientCategory.Id AS CategoryId, 
-                                               IngredientCategory.Title AS CategoryTitle, Ingredients.Title AS IngredientTitle,
-                                               Ingredients.Kilocalories, Ingredients.Picture 
-                                        FROM Ingredients INNER JOIN IngredientCategory ON Ingredients.IngredientCategoryId = IngredientCategory.Id
-                                        ;";
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        { 
-                            Category ingredientCategory = new Category
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
-                                Title = reader.GetString(reader.GetOrdinal("CategoryTitle"))
-                            };
-
-                            var ingredient = new Ingredient
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("IngredientsId")),
-                                IngredientCategory = ingredientCategory,
-                                Title = reader.GetString(reader.GetOrdinal("IngredientTitle")),
-                                Calories = reader.GetInt32(reader.GetOrdinal("Kilocalories")),
-                                Picture = reader["Picture"] as byte[]
-                            };
-                            result.Add(ingredient);
-                        }
-                    }
-                }
-                connection.Close();
-            }
-            return result;
-        }
         //not tested
         public Recipe GetRecipe(int id)
         {
@@ -886,7 +811,7 @@ namespace Cookbook.DataAccess
                 {
                     cmd.CommandText = @"SELECT Recipes.Id AS RecipesId, RecipeCategory.Id AS CategoryId, 
                                                RecipeCategory.Title AS CategoryTitle, Recipes.Title AS RecipesTitle,
-                                               Recipes.Instructions, Recipes.Time 
+                                               Recipes.Description, Recipes.Time, Recipes.Picture, Recipes.Instructions  
                                         FROM Recipes INNER JOIN RecipeCategory ON Recipes.RecipeCategoryId = RecipeCategory.Id
                                         WHERE Recipes.Id = @id
                                         ;";
@@ -903,14 +828,15 @@ namespace Cookbook.DataAccess
                         result = new Recipe
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("RecipesId")),
-                            RecipeCategory = recipeCategory,
+                            Category = recipeCategory,
                             Title = reader.GetString(reader.GetOrdinal("RecipesTitle")),
-                            Instruction = reader.GetString(reader.GetOrdinal("Instructions")),
-                            Time = reader.GetInt32(reader.GetOrdinal("Time"))
+                            Description = reader.GetString(reader.GetOrdinal("Description")),
+                            Time = reader.GetInt32(reader.GetOrdinal("Time")),
+                            Picture = reader["Picture"] as byte[],
+                            Instruction = reader.GetString(reader.GetOrdinal("Instructions"))
                         };
                     }
                     result.Ingredients = GetIngredientsOfRecipe(id);
-                    result.Pictures = GetRecipePictures(id);
                 }
                 connection.Close();
             }
@@ -951,7 +877,7 @@ namespace Cookbook.DataAccess
                             var ingredient = new Ingredient
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("IngredientsId")),
-                                IngredientCategory = ingredientCategory,
+                                Category = ingredientCategory,
                                 Title = reader.GetString(reader.GetOrdinal("IngredientTitle")),
                                 Calories = reader.GetInt32(reader.GetOrdinal("Kilocalories")),
                                 Picture = reader["Picture"] as byte[],
@@ -959,42 +885,6 @@ namespace Cookbook.DataAccess
                                 Unit = reader.GetString(reader.GetOrdinal("Units"))
                             };
                             result.Add(ingredient);
-                        }
-                    }
-                }
-                connection.Close();
-            }
-            return result;
-        }
-        //not tested
-        private List<RecipeImage> GetRecipePictures(int recipeId)
-        {
-            List<RecipeImage> result = new List<RecipeImage>();
-            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
-            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
-            {
-                connection.ConnectionString = _connectionString;
-                connection.Open();
-
-                using (SQLiteCommand cmd = new SQLiteCommand(connection))
-                {
-                    cmd.CommandText = @"SELECT RecipesPictures.Id AS PictureId, RecipesPictures.NumberOfPicture, 
-                                               RecipesPictures.Picture 
-                                        FROM RecipesPictures INNER JOIN Recipes ON RecipesPictures.RecipeId = Recipes.Id
-                                        WHERE RecipesPictures.RecipeId = @recipeId
-                                        ;";
-                    cmd.Parameters.AddWithValue("@recipeId", recipeId);
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var picture = new RecipeImage
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("PictureId")),
-                                NumberOfPicture = reader.GetInt32(reader.GetOrdinal("NumberOfPicture")),
-                                Picture = reader["Picture"] as byte[]
-                            };
-                            result.Add(picture);
                         }
                     }
                 }
@@ -1024,7 +914,7 @@ namespace Cookbook.DataAccess
         {
             throw new NotImplementedException();
         }
-        public List<Recipe> RecipesFromIngredients(List<Ingredient> ingredients)
+        public List<Recipe> GetRecipesFromIngredients(List<Ingredient> ingredients)
         {
             throw new NotImplementedException();
         }

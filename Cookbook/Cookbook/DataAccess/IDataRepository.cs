@@ -17,11 +17,10 @@ namespace Cookbook.DataAccess
         void AddIngredientCategory(string title);//+
         void AddRecipeCategory(string title);//+
         void AddIngredient(int ingredientCategoryId, string title, int kilocalories, byte[] picture);//+
-        void AddRecipe(int recipeCategoryId, string title, string instructions, int time);//+ not tested
-        void AddRecipeWithExistingIngredients(int recipeCategoryId, string title, string instructions, int time, 
-            List<Ingredient> ingredients);//+ not tested
+        void AddRecipe(int recipeCategoryId, string title, string description, string instructions, int time, byte[] picture);//+ not tested
+        void AddRecipeWithExistingIngredients(int recipeCategoryId, string title, string description, string instructions,
+            int time, byte[] picture, List<Ingredient> ingredients);//+ not tested
         void AddIngredientToRecipe(int recipeId, int ingredientId, int quantity, string units);//+ not tested
-        void AddRecipePicture(int recipeId, int numberOfPicture, byte[] picture);//+ not tested
         #endregion
 
         #region Update
@@ -32,18 +31,20 @@ namespace Cookbook.DataAccess
         /// </summary>
         void UpdateCategoryOnIngredient(int ingredientId, int ingredientCategoryId);//+ not tested
         void UpdateIngredientTitle(int ingredientId, string title);//+ not tested
-        void UpdateIngredientKilocalories(int ingredientId,int kilocalories);//+ not tested
+        void UpdateIngredientKilocalories(int ingredientId, int kilocalories);//+ not tested
         void UpdateIngredientPicture(int ingredientId, byte[] picture);//+ not tested
         /// <summary>
         /// Update row categoryId in Recipes table
         /// </summary>
         void UpdateCategoryOnRecipe(int recipeId, int recipeCategoryId);//+ not tested
         void UpdateRecipeTitle(int recipeId, string title);//+ not tested
+        void UpdateRecipeDescription(int recipeId, string description);
         void UpdateRecipeInstructions(int recipeId, string instructions);//+ not tested
         void UpdateRecipeTime(int recipeId, int time);//+ not tested
+        void UpdateRecipePicture(int recipeId, byte[] picture);//+ not tested
         void UpdateIngredientQuantityOnRecipe(int recipeId, int ingredientId, int quantity);//+ not tested
         void UpdateIngredientUnitsOnRecipe(int recipeId, int ingredientId, string units);//+ not tested
-        void UpdateRecipePicture(int recipeId, int numberOfPicture, byte[] picture);//+ not tested
+        
         #endregion
 
         #region Delete
@@ -52,7 +53,6 @@ namespace Cookbook.DataAccess
         void DeleteIngredient(int id);//
         void DeleteRecipe(int id);//
         void DeleteIngredientFromRecipe(int recipeId, int ingredientId);//+ not tested
-        void DeleteRecipePicture(int recipeId, int numberOfPicture);//+ not tested
         #endregion
 
         #region Get
@@ -84,7 +84,7 @@ namespace Cookbook.DataAccess
         List<Recipe> GetRecipes(int time);//
         List<Recipe> GetRecipesOfCategory(int categoryId);//
         List<Recipe> GetAllRecipe();//
-        List<Recipe> RecipesFromIngredients(List<Ingredient> ingredients);//
+        List<Recipe> GetRecipesFromIngredients(List<Ingredient> ingredients);//
         #endregion
     }
 }

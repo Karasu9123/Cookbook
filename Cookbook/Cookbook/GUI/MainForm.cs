@@ -250,7 +250,7 @@ namespace Cookbook
                 return;
 
             var selectedIngredient = listFridge.Items[index] as Ingredient;
-            if ((listIngredients.Items[0] as Ingredient).IngredientCategory.Id == selectedIngredient.IngredientCategory.Id)
+            if ((listIngredients.Items[0] as Ingredient).Category.Id == selectedIngredient.Category.Id)
             {
                 //Uncheck in listIngredient.
                 foreach (var item in listIngredients.CheckedItems)
