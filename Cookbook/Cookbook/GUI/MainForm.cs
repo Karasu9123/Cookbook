@@ -27,6 +27,7 @@ namespace Cookbook
             db.AddRecipeCategory("Жареные блюда");
             db.AddRecipeCategory("Вегетарианские блюда");
             db.AddRecipeCategory("Мясные блюда");
+            db.AddRecipeCategory("Фастфуд");
 
             db.AddIngredientCategory("Алкоголь");
             db.AddIngredientCategory("Фастфуд");
@@ -34,11 +35,19 @@ namespace Cookbook
             db.AddIngredientCategory("Мясо");
             db.AddIngredientCategory("Молочные продукты");
 
-            db.AddIngredient(1, "Вино", 100, null);
-            db.AddIngredient(2, "Мивина", 100, null);
-            db.AddIngredient(3, "Огурцы", 100, null);
-            db.AddIngredient(4, "Курица", 100, null);
-            db.AddIngredient(5, "Сыр", 100, null);
+            Random r = new Random();
+            db.AddIngredient(1, "Вино", 83, null);
+            db.AddIngredient(2, "Мивина", 350, null);
+            db.AddIngredient(3, "Огурцы", 15, null);
+            db.AddIngredient(3, "Петрушка", 23, null);
+            db.AddIngredient(4, "Курица", r.Next(135, 210), null);
+            db.AddIngredient(5, "Сыр", r.Next(268, 380), null);
+
+            db.AddRecipe(4, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, new byte[] { 1, 2, 12});
+            db.AddIngredientToRecipe(1, 2, 1, "Штук");
+            db.AddIngredientToRecipe(1, 4, 2, "Веточек");
+
+            Recipe recipe = db.GetRecipe(1);
             #endregion
 
             ///Set IngredientCategories.

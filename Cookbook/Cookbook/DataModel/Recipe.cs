@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace Cookbook.DataModel
 {
-    public class Recipe //H
+    public class Recipe
     {
         public int Id { get; set; }
         public Category Category { get; set; }

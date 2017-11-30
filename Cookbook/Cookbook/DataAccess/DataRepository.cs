@@ -8,7 +8,7 @@ using Cookbook.DataModel;
 
 namespace Cookbook.DataAccess
 {
-    public class DataRepository : IDataRepository //H
+    public class DataRepository : IDataRepository
     {
         private readonly string _connectionString;
         private readonly string _dataBaseName;
@@ -629,7 +629,7 @@ namespace Cookbook.DataAccess
         }
         private Category GetCategory(int id, string table)
         {
-            Category result;
+            Category result = null;
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
             {
@@ -645,13 +645,14 @@ namespace Cookbook.DataAccess
                     cmd.Parameters.AddWithValue("@id", id);
                     using (var reader = cmd.ExecuteReader())
                     {
-                        reader.Read();
-                        result = new Category
+                        if (reader.Read())
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Title = reader.GetString(reader.GetOrdinal("Title"))
-                        };
-
+                            result = new Category
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Title = reader.GetString(reader.GetOrdinal("Title"))
+                            };
+                        }
                     }
                 }
                 connection.Close();
@@ -805,7 +806,7 @@ namespace Cookbook.DataAccess
         //not tested
         public Recipe GetRecipe(int id)
         {
-            Recipe result;
+            Recipe result = null;
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
             {
@@ -823,25 +824,29 @@ namespace Cookbook.DataAccess
                     cmd.Parameters.AddWithValue("@id", id);
                     using (var reader = cmd.ExecuteReader())
                     {
-                        reader.Read();
-                        Category recipeCategory = new Category
+                        if (reader.Read())
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
-                            Title = reader.GetString(reader.GetOrdinal("CategoryTitle"))
-                        };
+                            Category recipeCategory = new Category
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                                Title = reader.GetString(reader.GetOrdinal("CategoryTitle"))
+                            };
 
-                        result = new Recipe
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("RecipesId")),
-                            Category = recipeCategory,
-                            Title = reader.GetString(reader.GetOrdinal("RecipesTitle")),
-                            Description = reader.GetString(reader.GetOrdinal("Description")),
-                            Time = reader.GetInt32(reader.GetOrdinal("Time")),
-                            Picture = reader["Picture"] as byte[],
-                            Instruction = reader.GetString(reader.GetOrdinal("Instructions"))
-                        };
+                            result = new Recipe
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("RecipesId")),
+                                Category = recipeCategory,
+                                Title = reader.GetString(reader.GetOrdinal("RecipesTitle")),
+                                Description = reader.GetString(reader.GetOrdinal("Description")),
+                                Time = reader.GetInt32(reader.GetOrdinal("Time")),
+                                Picture = reader["Picture"] as byte[],
+                                Instruction = reader.GetString(reader.GetOrdinal("Instructions"))
+                            };
+                        }
+
                     }
-                    result.Ingredients = GetIngredientsOfRecipe(id);
+                    if(result != null)
+                        result.Ingredients = GetIngredientsOfRecipe(id);
                 }
                 connection.Close();
             }
@@ -907,7 +912,7 @@ namespace Cookbook.DataAccess
         //not tested
         public List<Recipe> GetRecipes(int time)
         {
-            List<Recipe> result = null;
+            List<Recipe> result = new List<Recipe>();
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
             {
@@ -955,7 +960,7 @@ namespace Cookbook.DataAccess
         //not tested
         public List<Recipe> GetRecipesOfCategory(int categoryId)
         {
-            List<Recipe> result = null;
+            List<Recipe> result = new List<Recipe>();
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
             {
@@ -1003,7 +1008,7 @@ namespace Cookbook.DataAccess
         //not tested
         public List<Recipe> GetAllRecipe()
         {
-            List<Recipe> result = null;
+            List<Recipe> result = new List<Recipe>();
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
             {
@@ -1046,9 +1051,7 @@ namespace Cookbook.DataAccess
             }
             return result;
         }
-        #endregion
-
-        #region Not implemented  
+        //NotImplemented
         public List<Recipe> GetRecipesFromIngredients(List<Ingredient> ingredients)
         {
             throw new NotImplementedException();

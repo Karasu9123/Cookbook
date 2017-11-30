@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Cookbook.DataModel
 {
-    public class Ingredient //H
+    public class Ingredient
     {
         public int Id { get; set; }
         public Category Category { get; set; }
@@ -15,9 +15,6 @@ namespace Cookbook.DataModel
         public int Calories { get; set; }
         public int Quantity { get; set; }
         public string Unit { get; set; }//Единицы измерения
-        /// <summary>
-        /// Picture in Base64 string
-        /// </summary>
         public byte[] Picture { get; set; }
 
         public Image GetImage()

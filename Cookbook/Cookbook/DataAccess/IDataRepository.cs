@@ -69,21 +69,21 @@ namespace Cookbook.DataAccess
         List<Ingredient> GetIngredients(string title);// 
         List<Ingredient> GetIngredientsOfCategory(int categoryId);//+ not tested
         List<Ingredient> GetAllIngredient();//+ not tested
-        Recipe GetRecipe(int id);//
+        Recipe GetRecipe(int id);//+
         /// <summary>
         /// Returns recipes that have an argument in the title
         /// </summary>
         /// <param name="title">Part of title</param>
         /// <returns></returns>
-        List<Recipe> GetRecipes(string title);// 
+        List<Recipe> GetRecipes(string title);// +
         /// <summary>
         /// Returns recipes in which the time is less than the argument
         /// /// </summary>
         /// <param name="time">Max cooking time</param>
         /// <returns></returns>
-        List<Recipe> GetRecipes(int time);//
-        List<Recipe> GetRecipesOfCategory(int categoryId);//
-        List<Recipe> GetAllRecipe();//
+        List<Recipe> GetRecipes(int time);//+
+        List<Recipe> GetRecipesOfCategory(int categoryId);//+
+        List<Recipe> GetAllRecipe();//+
         List<Recipe> GetRecipesFromIngredients(List<Ingredient> ingredients);//
         #endregion
     }
