@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Data;
 using System.Data.Common;
@@ -1051,10 +1050,17 @@ namespace Cookbook.DataAccess
             }
             return result;
         }
-        //NotImplemented
         public List<Recipe> GetRecipesFromIngredients(List<Ingredient> ingredients)
         {
-            throw new NotImplementedException();
+            List<Recipe> result = GetAllRecipe();
+            var ingr = ingredients.Select(i => i.Id);//создаем список Id полученых ингредиентов
+
+                                                 //создаем список Id ингредиентов из рецепта
+            return result.Where(recipe => recipe.Ingredients.Select(i => i.Id)
+                                          //те рецепты для которых список ингредиентов полностью содержится
+                                          //в списке имеющихся ингредиентов
+                                          .All( recipeId => ingr.Contains(recipeId))
+                               ).ToList();
         }
         #endregion
     }

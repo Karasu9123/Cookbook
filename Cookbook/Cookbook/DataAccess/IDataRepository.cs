@@ -1,17 +1,11 @@
 ﻿using Cookbook.DataModel;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace Cookbook.DataAccess
 {
     interface IDataRepository
     {
-        void CreateDataBase();//+
+        void CreateDataBase();
 
         #region Add
         void AddIngredientCategory(string title);//+
@@ -24,67 +18,67 @@ namespace Cookbook.DataAccess
         #endregion
 
         #region Update
-        void UpdateIngredientCategory(int id, string title);//+ not tested
-        void UpdateRecipeCategory(int id, string title);//+ not tested
+        void UpdateIngredientCategory(int id, string title);
+        void UpdateRecipeCategory(int id, string title);
         /// <summary>
         /// Update row categoryId in Ingredients table
         /// </summary>
-        void UpdateCategoryOnIngredient(int ingredientId, int ingredientCategoryId);//+ not tested
-        void UpdateIngredientTitle(int ingredientId, string title);//+ not tested
-        void UpdateIngredientKilocalories(int ingredientId, int kilocalories);//+ not tested
-        void UpdateIngredientPicture(int ingredientId, byte[] picture);//+ not tested
+        void UpdateCategoryOnIngredient(int ingredientId, int ingredientCategoryId);
+        void UpdateIngredientTitle(int ingredientId, string title);
+        void UpdateIngredientKilocalories(int ingredientId, int kilocalories);
+        void UpdateIngredientPicture(int ingredientId, byte[] picture);
         /// <summary>
         /// Update row categoryId in Recipes table
         /// </summary>
-        void UpdateCategoryOnRecipe(int recipeId, int recipeCategoryId);//+ not tested
-        void UpdateRecipeTitle(int recipeId, string title);//+ not tested
+        void UpdateCategoryOnRecipe(int recipeId, int recipeCategoryId);
+        void UpdateRecipeTitle(int recipeId, string title);
         void UpdateRecipeDescription(int recipeId, string description);
-        void UpdateRecipeInstructions(int recipeId, string instructions);//+ not tested
-        void UpdateRecipeTime(int recipeId, int time);//+ not tested
-        void UpdateRecipePicture(int recipeId, byte[] picture);//+ not tested
-        void UpdateIngredientQuantityOnRecipe(int recipeId, int ingredientId, int quantity);//+ not tested
-        void UpdateIngredientUnitsOnRecipe(int recipeId, int ingredientId, string units);//+ not tested
+        void UpdateRecipeInstructions(int recipeId, string instructions);
+        void UpdateRecipeTime(int recipeId, int time);
+        void UpdateRecipePicture(int recipeId, byte[] picture);
+        void UpdateIngredientQuantityOnRecipe(int recipeId, int ingredientId, int quantity);
+        void UpdateIngredientUnitsOnRecipe(int recipeId, int ingredientId, string units);
         
         #endregion
 
         #region Delete
-        void DeleteIngredientCategory(int id);//
-        void DeleteRecipeCategory(int id);//
-        void DeleteIngredient(int id);//
-        void DeleteRecipe(int id);//
-        void DeleteIngredientFromRecipe(int recipeId, int ingredientId);//+ not tested
+        void DeleteIngredientCategory(int id);
+        void DeleteRecipeCategory(int id);
+        void DeleteIngredient(int id);
+        void DeleteRecipe(int id);
+        void DeleteIngredientFromRecipe(int recipeId, int ingredientId);
         #endregion
 
         #region Get
-        List<Category> GetAllRecipeCategory();//+
-        List<Category> GetAllIngredientCategory();//+
-        Category GetRecipeCategory(int id);//+
-        Category GetIngredientCategory(int id);//+
-        Ingredient GetIngredient(int id);//+
+        List<Category> GetAllRecipeCategory();
+        List<Category> GetAllIngredientCategory();
+        Category GetRecipeCategory(int id);
+        Category GetIngredientCategory(int id);
+        Ingredient GetIngredient(int id);
         /// <summary>
         /// Returns ingredients that have an argument in the title
         /// </summary>
         /// <param name="title">Part of title</param>
         /// <returns></returns>
-        List<Ingredient> GetIngredients(string title);// 
-        List<Ingredient> GetIngredientsOfCategory(int categoryId);//+ not tested
-        List<Ingredient> GetAllIngredient();//+ not tested
-        Recipe GetRecipe(int id);//+
+        List<Ingredient> GetIngredients(string title);
+        List<Ingredient> GetIngredientsOfCategory(int categoryId);
+        List<Ingredient> GetAllIngredient();
+        Recipe GetRecipe(int id);
         /// <summary>
         /// Returns recipes that have an argument in the title
         /// </summary>
         /// <param name="title">Part of title</param>
         /// <returns></returns>
-        List<Recipe> GetRecipes(string title);// +
+        List<Recipe> GetRecipes(string title);
         /// <summary>
         /// Returns recipes in which the time is less than the argument
         /// /// </summary>
         /// <param name="time">Max cooking time</param>
         /// <returns></returns>
-        List<Recipe> GetRecipes(int time);//+
-        List<Recipe> GetRecipesOfCategory(int categoryId);//+
-        List<Recipe> GetAllRecipe();//+
-        List<Recipe> GetRecipesFromIngredients(List<Ingredient> ingredients);//
+        List<Recipe> GetRecipes(int time);
+        List<Recipe> GetRecipesOfCategory(int categoryId);
+        List<Recipe> GetAllRecipe();
+        List<Recipe> GetRecipesFromIngredients(List<Ingredient> ingredients);
         #endregion
     }
 }

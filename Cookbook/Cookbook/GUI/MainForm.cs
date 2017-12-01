@@ -43,11 +43,14 @@ namespace Cookbook
             db.AddIngredient(4, "Курица", r.Next(135, 210), null);
             db.AddIngredient(5, "Сыр", r.Next(268, 380), null);
 
-            db.AddRecipe(4, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, new byte[] { 1, 2, 12});
+            db.AddRecipe(4, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, new byte[] { 1, 2, 12 });
             db.AddIngredientToRecipe(1, 2, 1, "Штук");
             db.AddIngredientToRecipe(1, 4, 2, "Веточек");
 
             Recipe recipe = db.GetRecipe(1);
+            var ingredients = new List<Ingredient>() { db.GetIngredient(1), db.GetIngredient(2), db.GetIngredient(3),
+                                                       db.GetIngredient(4), db.GetIngredient(5), db.GetIngredient(6)};
+            var recipes = db.GetRecipesFromIngredients(ingredients);
             #endregion
 
             ///Set IngredientCategories.
