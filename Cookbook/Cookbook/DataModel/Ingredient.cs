@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Cookbook.DataModel
 {
-    public class Ingredient
+    public class Ingredient : IEquatable<Ingredient>
     {
         public int Id { get; set; }
         public Category Category { get; set; }
@@ -20,6 +16,20 @@ namespace Cookbook.DataModel
         public Image GetImage()
         {
             return (Bitmap)((new ImageConverter()).ConvertFrom(Picture));
+        }
+
+        public bool Equals(Ingredient otherIngredient)
+        {
+            if (otherIngredient == null)
+                return false;
+            return Id == otherIngredient.Id;
+        }
+
+        public override bool Equals(object other)
+        {
+            if (!(other is Ingredient))
+                return false;
+            return Equals(other as Ingredient);
         }
     }
 }
