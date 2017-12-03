@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Cookbook.DataAccess
 {
-    interface IDataRepository
+    public interface IDataRepository
     {
         void CreateDataBase();
 

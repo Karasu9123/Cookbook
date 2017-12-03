@@ -70,7 +70,7 @@ namespace Cookbook.DataAccess
                                             Title            TEXT NOT NULL,
                                             Description      TEXT NOT NULL,
                                             Time             INTEGER NOT NULL,
-                                            Picture          BLOB NOT NULL,
+                                            Picture          BLOB,
                                             Instructions     TEXT NOT NULL,
                                             FOREIGN KEY(RecipeCategoryId) REFERENCES RecipeCategory(Id)
                                             );";

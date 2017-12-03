@@ -21,9 +21,11 @@ namespace Cookbook.DataModel
         public string Instruction { get; set; }
         public List<Ingredient> Ingredients { get; set; }
 
+        public static Image DefaultImage { get; set; }
+
         public Image GetImage()
         {
-            return (Bitmap)((new ImageConverter()).ConvertFrom(Picture));
+            return Picture == null ? DefaultImage : (Bitmap)((new ImageConverter()).ConvertFrom(Picture));
         }
     }
 }

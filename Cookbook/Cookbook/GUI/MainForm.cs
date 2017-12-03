@@ -6,7 +6,7 @@ using Cookbook.DataAccess;
 using System.IO;
 using System.Drawing;
 
-namespace Cookbook
+namespace Cookbook.GUI
 {
     public partial class MainForm : Form
     {
@@ -14,7 +14,7 @@ namespace Cookbook
         string testDB = "TestDB.db3";
         string dbPath = Path.GetDirectoryName(Path.GetDirectoryName(Application.StartupPath)) + @"\";
         IDataRepository db;
-
+        Details formDetails;
 
         public MainForm()
         {
@@ -43,7 +43,7 @@ namespace Cookbook
             db.AddIngredient(4, "Курица", r.Next(135, 210), null);
             db.AddIngredient(5, "Сыр", r.Next(268, 380), null);
 
-            db.AddRecipe(4, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, new byte[] { 1, 2, 12 });
+            db.AddRecipe(4, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, null);
             db.AddIngredientToRecipe(1, 2, 1, "Штук");
             db.AddIngredientToRecipe(1, 4, 2, "Веточек");
 
@@ -53,21 +53,14 @@ namespace Cookbook
             var recipes = db.GetRecipesFromIngredients(ingredients);
             #endregion
 
-            ///Set IngredientCategories.
-            var ingredientCategories = db.GetAllIngredientCategory();
-            listIngredientCategories.DataSource = ingredientCategories;
-            listIngredientCategories.DisplayMember = "Title";
+            listCategoriesOfIngredient.DataSource = db.GetAllIngredientCategory();
+            SetRecipeCategories(db.GetAllRecipeCategory());
 
-            ///Test data.
-            for (int i = 0; i < 200; ++i)
-            {
-                var label = new LinkLabel();
-                label.Text = "Very Looooong Recipe Category";
-                label.AutoEllipsis = true;
-                label.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-                tableCategoriesPanel.Controls.Add(label);
-            }
+            fridge.DisplayMember = "Title";
+            listIngredients.DisplayMember = "Title";
+            listCategoriesOfIngredient.DisplayMember = "Title";
 
+            Recipe.DefaultImage = new Bitmap(Properties.Resources.DefaultImage);
         }
 
 
@@ -85,12 +78,13 @@ namespace Cookbook
                 label.AutoEllipsis = true;
                 label.Anchor = AnchorStyles.Left | AnchorStyles.Right;
                 label.Text = category.Title;
-                label.Links.Add(0, label.Text.Length - 1, category.Id);
+                label.Links.Add(0, label.Text.Length, category.Id);
                 label.LinkClicked += LinkRecipeCategory_Click;
 
                 tableCategoriesPanel.Controls.Add(label);
             }
         }
+
 
 
         /// <summary>
@@ -101,7 +95,7 @@ namespace Cookbook
         {
             tabPageFind.Controls.Clear();
 
-            if (recipes == null)
+            if (recipes == null || recipes.Count == 0)
             {
                 ///Draw "Not Found".
                 var labelNotFound = new Label();
@@ -130,10 +124,10 @@ namespace Cookbook
                     img.SizeMode = PictureBoxSizeMode.Zoom;
                     img.BorderStyle = BorderStyle.None;
                     img.TabStop = false;
-                    //img.Image = recipe.GetImage();
+                    img.Image = recipe.GetImage();
 
                     title.Location = new Point(225, 15 + i * recordSize);
-                    title.Size = new Size(533, 25);
+                    title.Size = new Size(tabPageFind.Width - 300, 25);
                     title.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
                     title.AutoEllipsis = true;
                     title.RightToLeft = RightToLeft.No;
@@ -141,38 +135,45 @@ namespace Cookbook
                     title.Text = recipe.Title;
 
                     description.Location = new Point(210, 45 + i * recordSize);
-                    description.Size = new Size(600, 85);
+                    description.Size = new Size(tabPageFind.Width - 230, 85);
                     description.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
                     description.AutoEllipsis = true;
                     description.RightToLeft = RightToLeft.No;
                     description.Font = new Font("Times New Roman", 11.25F, FontStyle.Regular, GraphicsUnit.Point, (byte)(204));
-                    //description.Text = recipe.Description;
+                    description.Text = recipe.Description;
 
                     ingredients.Location = new Point(210, 140 + i * recordSize);
-                    ingredients.Size = new Size(610, 60);
+                    ingredients.Size = new Size(tabPageFind.Width - 230, 60);
                     ingredients.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
                     ingredients.AutoEllipsis = true;
                     description.RightToLeft = RightToLeft.No;
                     ingredients.Font = new Font("Sitka Small", 9.75F, FontStyle.Regular, GraphicsUnit.Point, (byte)(204));
                     ingredients.ForeColor = Color.DarkSlateBlue;
-                    //ingredients.Text = 
+                    foreach (var ingredient in recipe.Ingredients)
+                        ingredients.Text += ingredient.Title + "        ";
 
-                    details.Location = new Point(783, 15 + i * recordSize);
-                    details.Size = new Size(39, 13);
+                    details.Location = new Point(tabPageFind.Width - 60, 15 + i * recordSize);
+                    details.Size = new Size(40, 13);
                     details.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                     details.AutoSize = true;
                     details.Text = "Details";
-                    details.Links.Add(0, details.Text.Length - 1, recipe.Id);
+                    details.Links.Add(0, details.Text.Length, recipe.Id);
                     details.LinkClicked += DetailsLink_Clicked;
 
+
+                    tabPageFind.Controls.Add(img);
+                    tabPageFind.Controls.Add(title);
+                    tabPageFind.Controls.Add(description);
+                    tabPageFind.Controls.Add(ingredients);
+                    tabPageFind.Controls.Add(details);
 
                     ++i; //НЕ ТРОГАТЬ!!!
                 }
             }
 
-
             tabControl.SelectedTab = tabPageFind;
         }
+
 
 
         /// <summary>
@@ -184,14 +185,18 @@ namespace Cookbook
         {
             if (e.Button == MouseButtons.Left)
             {
-                ///Launch Details form's AddMethod().
-                throw new NotImplementedException();
+                if (formDetails == null)
+                    formDetails = new Details(db);
+
+                formDetails.Add((int)e.Link.LinkData);
+                formDetails.Show();
             }
         }
 
 
+
         /// <summary>
-        /// Read all clicked category's recipes.
+        /// Read all recipes of the clicked category.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -205,6 +210,7 @@ namespace Cookbook
         }
 
 
+
         /// <summary>
         /// Add all ingredients from selectedCategory to listIngredients. 
         /// </summary>
@@ -212,35 +218,25 @@ namespace Cookbook
         /// <param name="e"></param>
         private void listIngredientCategories_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selectedCategory = listIngredientCategories.SelectedItem as Category;
-            var ingredients = db.GetIngredientsOfCategory(selectedCategory.Id);
+            if (listCategoriesOfIngredient.SelectedItem == null)
+                return;
 
             listIngredients.Items.Clear();
+            var ingredients = db.GetIngredientsOfCategory((listCategoriesOfIngredient.SelectedItem as Category).Id);
 
             foreach (var ingredient in ingredients)
             {
-                //If ingredient consist in listFridge, then checked = true.
-                bool inFridge = false;
-                foreach (var item in listFridge.Items)
-                {
-                    if ((item as Ingredient).Id == ingredient.Id)
-                    {
-                        inFridge = true;
-                        break;
-                    }
-                }
-
-                //Add ingredient to list.
+                bool inFridge = fridge.Items.Contains(ingredient);
                 listIngredients.Items.Add(ingredient, inFridge);
             }
 
-            listIngredients.DisplayMember = "Title";
             listIngredients.Refresh();
         }
 
 
+
         /// <summary>
-        /// Add/Remove selectedIngredient to/from listFridge.
+        /// Add/Remove selectedIngredient to/from fridge.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -250,72 +246,59 @@ namespace Cookbook
 
             if (e.NewValue == CheckState.Checked)
             {
-                listFridge.Items.Add(selectedIngredient);
+                if (!fridge.Items.Contains(selectedIngredient))
+                    fridge.Items.Add(selectedIngredient);
+
                 return;
             }
 
 
             if (e.NewValue == CheckState.Unchecked)
             {
-                int index;
-
-                //Find index.
-                for (index = 0; index < listFridge.Items.Count; ++index)
-                {
-                    if ((listFridge.Items[index] as Ingredient).Id == selectedIngredient.Id)
-                        break;
-                }
-
-                listFridge.Items.RemoveAt(index);
+                int index = fridge.Items.IndexOf(selectedIngredient);
+                if (index != -1)
+                    fridge.Items.RemoveAt(index);
             }
         }
 
 
+
         /// <summary>
-        /// Remove clicked item from listFridge.
+        /// Remove clicked item from fridge.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void listFridge_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            int index = listFridge.IndexFromPoint(e.Location);
-
-            if (index == ListBox.NoMatches)
+            int index = fridge.IndexFromPoint(e.Location);
+            if (index == -1)
                 return;
 
-            var selectedIngredient = listFridge.Items[index] as Ingredient;
-            if ((listIngredients.Items[0] as Ingredient).Category.Id == selectedIngredient.Category.Id)
-            {
-                //Uncheck in listIngredient.
-                foreach (var item in listIngredients.CheckedItems)
-                {
-                    if ((item as Ingredient).Id == selectedIngredient.Id)
-                    {
-                        listIngredients.SetItemChecked(listIngredients.Items.IndexOf(item), false);
-                        break;
-                    }
-                }
-            }
+            var selectedIngredient = fridge.Items[index] as Ingredient;
 
-            //Delete from listFridge.
-            listFridge.SelectedItems.Remove(selectedIngredient);
-            listFridge.Refresh();
+            //Uncheck in listIngredient.
+            int checkedIndex = listIngredients.Items.IndexOf(selectedIngredient);
+            if (checkedIndex != -1)
+                listIngredients.Items.RemoveAt(checkedIndex);
+
+            //Delete from fridge.
+            fridge.Items.Remove(selectedIngredient);
+            fridge.Refresh();
         }
 
 
+
         /// <summary>
-        /// Clear listIngredient and listFridge.
+        /// Clear listIngredient and fridge.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void buttonClear_Click(object sender, EventArgs e)
         {
-            listFridge.Items.Clear();
+            fridge.Items.Clear();
             listIngredients.Items.Clear();
-
-            if (listIngredientCategories.SelectedItem != null)
-                listIngredientCategories.SetSelected(listIngredientCategories.SelectedIndex, false);
         }
+
 
 
         /// <summary>
@@ -327,19 +310,19 @@ namespace Cookbook
         {
             List<Recipe> recipes = null;
 
-            if (listFridge.Items.Count != 0)
+            if (fridge.Items.Count != 0)
             {
                 var ingredients = new List<Ingredient>();
 
-                foreach (var item in listFridge.Items)
-                    ingredients.Add(item as Ingredient);
+                foreach (Ingredient item in fridge.Items)
+                    ingredients.Add(item);
 
-                //recipes = db.GetRecipes(ingredients);
-                throw new NotImplementedException();
+                recipes = db.GetRecipesFromIngredients(ingredients);
             }
 
             DrawRecipes(recipes);
         }
+
 
 
         /// <summary>
@@ -352,5 +335,6 @@ namespace Cookbook
             var recipes = textBoxSearch.Text != "" ? db.GetRecipes(textBoxSearch.Text) : null;
             DrawRecipes(recipes);
         }
+
     }
 }
