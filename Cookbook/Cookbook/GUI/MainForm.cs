@@ -10,11 +10,11 @@ namespace Cookbook.GUI
 {
     public partial class MainForm : Form
     {
-        string dbName = "Cookbook.db3";
+        //string dbName = "Cookbook.db3";
         string testDB = "TestDB.db3";
         string dbPath = Path.GetDirectoryName(Path.GetDirectoryName(Application.StartupPath)) + @"\";
         IDataRepository db;
-        Details formDetails;
+        Details details = null;
 
         public MainForm()
         {
@@ -62,7 +62,6 @@ namespace Cookbook.GUI
 
             Recipe.DefaultImage = new Bitmap(Properties.Resources.DefaultImage);
         }
-
 
 
         /// <summary>
@@ -182,14 +181,14 @@ namespace Cookbook.GUI
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void DetailsLink_Clicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
+        {    
             if (e.Button == MouseButtons.Left)
             {
-                if (formDetails == null)
-                    formDetails = new Details(db);
+                if (details == null || details.IsDisposed)
+                    details = new Details(db);
 
-                formDetails.Add((int)e.Link.LinkData);
-                formDetails.Show();
+                details.Add((int)e.Link.LinkData);
+                details.Show();
             }
         }
 

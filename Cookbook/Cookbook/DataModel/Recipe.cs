@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Cookbook.DataModel
 {
@@ -26,6 +25,16 @@ namespace Cookbook.DataModel
         public Image GetImage()
         {
             return Picture == null ? DefaultImage : (Bitmap)((new ImageConverter()).ConvertFrom(Picture));
+        }
+
+        public string ImageToBase64()
+        {
+            if (Picture != null)
+                return Convert.ToBase64String(Picture);
+
+            var ms = new MemoryStream();
+            DefaultImage.Save(ms, ImageFormat.Bmp);
+            return Convert.ToBase64String(ms.GetBuffer());
         }
     }
 }
