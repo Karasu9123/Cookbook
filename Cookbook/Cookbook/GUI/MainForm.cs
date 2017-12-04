@@ -279,7 +279,7 @@ namespace Cookbook.GUI
             //Uncheck in listIngredient.
             int checkedIndex = listIngredients.Items.IndexOf(selectedIngredient);
             if (checkedIndex != -1)
-                listIngredients.Items.RemoveAt(checkedIndex);
+                listIngredients.SetItemCheckState(checkedIndex, CheckState.Unchecked);
 
             //Delete from fridge.
             fridge.Items.Remove(selectedIngredient);
