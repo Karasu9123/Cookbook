@@ -43,7 +43,7 @@
             this.webBrowser.Location = new System.Drawing.Point(0, 0);
             this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser.Name = "webBrowser";
-            this.webBrowser.Size = new System.Drawing.Size(352, 390);
+            this.webBrowser.Size = new System.Drawing.Size(582, 459);
             this.webBrowser.TabIndex = 1;
             // 
             // tableLayoutPanel
@@ -53,12 +53,12 @@
             this.tableLayoutPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.tableLayoutPanel.ColumnCount = 2;
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 158F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 164F));
             this.tableLayoutPanel.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
             this.tableLayoutPanel.RowCount = 2;
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel.Size = new System.Drawing.Size(184, 348);
             this.tableLayoutPanel.TabIndex = 2;
             // 
@@ -66,7 +66,7 @@
             // 
             this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonClear.Location = new System.Drawing.Point(12, 361);
+            this.buttonClear.Location = new System.Drawing.Point(12, 430);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(176, 23);
             this.buttonClear.TabIndex = 3;
@@ -84,7 +84,7 @@
             this.panelRecipes.Controls.Add(this.tableLayoutPanel);
             this.panelRecipes.Location = new System.Drawing.Point(0, 0);
             this.panelRecipes.Name = "panelRecipes";
-            this.panelRecipes.Size = new System.Drawing.Size(202, 355);
+            this.panelRecipes.Size = new System.Drawing.Size(202, 424);
             this.panelRecipes.TabIndex = 4;
             // 
             // panelBrowser
@@ -96,7 +96,7 @@
             this.panelBrowser.Controls.Add(this.webBrowser);
             this.panelBrowser.Location = new System.Drawing.Point(208, 0);
             this.panelBrowser.Name = "panelBrowser";
-            this.panelBrowser.Size = new System.Drawing.Size(356, 394);
+            this.panelBrowser.Size = new System.Drawing.Size(586, 463);
             this.panelBrowser.TabIndex = 5;
             // 
             // Details
@@ -104,7 +104,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.PapayaWhip;
-            this.ClientSize = new System.Drawing.Size(564, 396);
+            this.ClientSize = new System.Drawing.Size(794, 465);
             this.Controls.Add(this.panelBrowser);
             this.Controls.Add(this.panelRecipes);
             this.Controls.Add(this.buttonClear);

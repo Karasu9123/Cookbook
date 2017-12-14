@@ -45,8 +45,8 @@ namespace Cookbook.GUI
             // 
             // tabControl
             // 
-            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl.Controls.Add(this.tabPageSelection);
             this.tabControl.Controls.Add(this.tabPageFind);
@@ -119,11 +119,12 @@ namespace Cookbook.GUI
             // 
             // listIngredients
             // 
-            this.listIngredients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.listIngredients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listIngredients.FormattingEnabled = true;
             this.listIngredients.Location = new System.Drawing.Point(196, 14);
+            this.listIngredients.MultiColumn = true;
             this.listIngredients.Name = "listIngredients";
             this.listIngredients.Size = new System.Drawing.Size(347, 214);
             this.listIngredients.TabIndex = 2;
@@ -131,7 +132,7 @@ namespace Cookbook.GUI
             // 
             // fridge
             // 
-            this.fridge.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.fridge.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.fridge.FormattingEnabled = true;
             this.fridge.Location = new System.Drawing.Point(549, 6);
@@ -142,7 +143,7 @@ namespace Cookbook.GUI
             // 
             // listCategoriesOfIngredient
             // 
-            this.listCategoriesOfIngredient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.listCategoriesOfIngredient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.listCategoriesOfIngredient.FormattingEnabled = true;
             this.listCategoriesOfIngredient.Location = new System.Drawing.Point(8, 6);
@@ -214,7 +215,7 @@ namespace Cookbook.GUI
             // 
             // textBoxSearch
             // 
-            this.textBoxSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.textBoxSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxSearch.Location = new System.Drawing.Point(205, 21);
             this.textBoxSearch.Name = "textBoxSearch";

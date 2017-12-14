@@ -74,6 +74,7 @@
     <Compile Include="DataModel\Ingredient.cs" />
     <Compile Include="DataModel\Category.cs" />
     <Compile Include="DataModel\Recipe.cs" />
+    <Compile Include="DataModel\Unit.cs" />
     <Compile Include="GUI\DataManager.cs">
       <SubType>Form</SubType>
     </Compile>

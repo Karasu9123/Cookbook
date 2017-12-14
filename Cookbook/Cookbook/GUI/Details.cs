@@ -16,7 +16,6 @@ namespace Cookbook.GUI
 
         private class Record
         {
-            public int Row { get; set; }
             public ButtonRecipe Recipe { get; set; }
             public Button Exit { get; set; }
         }
@@ -66,7 +65,7 @@ namespace Cookbook.GUI
                 tableLayoutPanel.Controls.Add(buttonRecipe);
                 tableLayoutPanel.Controls.Add(buttonExit);
 
-                records.Add(new Record() { Row = records.Count, Recipe = buttonRecipe, Exit = buttonExit });
+                records.Add(new Record() { Recipe = buttonRecipe, Exit = buttonExit });
             }
 
             currentId = recipeId;
@@ -92,7 +91,6 @@ namespace Cookbook.GUI
 
             record.Recipe.Dispose();
             record.Exit.Dispose();
-            tableLayoutPanel.RowStyles.RemoveAt(record.Row);
         }
 
 

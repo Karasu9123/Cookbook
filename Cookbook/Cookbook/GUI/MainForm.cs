@@ -36,13 +36,13 @@ namespace Cookbook.GUI
             db.AddIngredientCategory("Молочные продукты");
 
             Random r = new Random();
+            
             db.AddIngredient(1, "Вино", 83, null);
             db.AddIngredient(2, "Мивина", 350, null);
             db.AddIngredient(3, "Огурцы", 15, null);
             db.AddIngredient(3, "Петрушка", 23, null);
             db.AddIngredient(4, "Курица", r.Next(135, 210), null);
             db.AddIngredient(5, "Сыр", r.Next(268, 380), null);
-
             db.AddRecipe(4, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, null);
             db.AddIngredientToRecipe(1, 2, 1, "Штук");
             db.AddIngredientToRecipe(1, 4, 2, "Веточек");
