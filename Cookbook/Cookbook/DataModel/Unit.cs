@@ -8,7 +8,7 @@ namespace Cookbook.DataModel
 {
     public class Unit
     {
-        int Id { get; set; }
-        string Title { get; set; }
+        public int Id { get; set; }
+        public string Title { get; set; }
     }
 }

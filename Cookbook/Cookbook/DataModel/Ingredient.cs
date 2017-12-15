@@ -10,7 +10,7 @@ namespace Cookbook.DataModel
         public string Title { get; set; }
         public int Calories { get; set; }
         public int Quantity { get; set; }
-        public string Unit { get; set; }//Единицы измерения
+        public Unit Unit { get; set; }//Единицы измерения
         public byte[] Picture { get; set; }
 
         public Image GetImage()
