@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
 using Cookbook.DataModel;
-using System;
 
 namespace Cookbook.DataAccess
 {
@@ -136,6 +135,27 @@ namespace Cookbook.DataAccess
                 connection.Close();
             }
         }
+        //not tested
+        public void AddUnit(string title)
+        {
+            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
+            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
+            {
+                connection.ConnectionString = _connectionString;
+                connection.Open();
+
+                using (SQLiteCommand cmd = new SQLiteCommand(connection))
+                {
+                    cmd.CommandText = @"INSERT INTO Units (Title)
+                                        VALUES (@title)
+                                        ;";
+                    cmd.Parameters.AddWithValue("@title", title);
+                    cmd.ExecuteNonQuery();
+
+                }
+                connection.Close();
+            }
+        }
         public void AddIngredient(int ingredientCategoryId, string title, int kilocalories, byte[] picture)
         {
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
@@ -220,15 +240,15 @@ namespace Cookbook.DataAccess
                     cmd.CommandText = @"SELECT last_insert_rowid();";
                     int lastRecipeId = (int)cmd.ExecuteScalar();
 
-                    cmd.CommandText = @"INSERT INTO IngredientRecipe (RecipeId, IngredientId, Quantity, Units)
-                                        VALUES (@recipeId, @ingredientId, @quantity, @units)
+                    cmd.CommandText = @"INSERT INTO IngredientRecipe (RecipeId, IngredientId, Quantity, UnitId)
+                                        VALUES (@recipeId, @ingredientId, @quantity, @unitId)
                                         ;";
                     cmd.Parameters.AddWithValue("@recipeId", lastRecipeId);
                     foreach (var ingredient in ingredients)
                     {
                         cmd.Parameters.AddWithValue("@ingredientId", ingredient.Id);
                         cmd.Parameters.AddWithValue("@quantity", ingredient.Quantity);
-                        cmd.Parameters.AddWithValue("@units", ingredient.Unit);
+                        cmd.Parameters.AddWithValue("@unitId", ingredient.Unit.Id);
                         cmd.ExecuteNonQuery();
                     }
 
@@ -237,7 +257,7 @@ namespace Cookbook.DataAccess
             }
         }
         //not tested
-        public void AddIngredientToRecipe(int recipeId, int ingredientId, int quantity, string units)//need change
+        public void AddIngredientToRecipe(int recipeId, int ingredientId, int quantity, int unitId)
         {
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
@@ -251,13 +271,13 @@ namespace Cookbook.DataAccess
                     cmd.CommandType = CommandType.Text;
                     cmd.ExecuteNonQuery();
 
-                    cmd.CommandText = @"INSERT INTO IngredientRecipe (RecipeId, IngredientId, Quantity, Units)
-                                        VALUES (@recipeId, @ingredientId, @quantity, @units)
+                    cmd.CommandText = @"INSERT INTO IngredientRecipe (RecipeId, IngredientId, Quantity, UnitId)
+                                        VALUES (@recipeId, @ingredientId, @quantity, @unitId)
                                         ;";
                     cmd.Parameters.AddWithValue("@recipeId", recipeId);
                     cmd.Parameters.AddWithValue("@ingredientId", ingredientId);
                     cmd.Parameters.AddWithValue("@quantity", quantity);
-                    cmd.Parameters.AddWithValue("@units", units);
+                    cmd.Parameters.AddWithValue("@unitId", unitId);
                     cmd.ExecuteNonQuery();
                 }
                 connection.Close();
@@ -965,9 +985,17 @@ namespace Cookbook.DataAccess
         //not tested
         public List<Recipe> GetRecipes(string title)
         {
-            List<Recipe> recipes = GetAllRecipe();
-            List<Recipe> result = recipes.Where(i => i.Title.ToUpper().Contains(title.ToUpper())).ToList();
-            return result;
+            List<Recipe> result = GetAllRecipe();
+            title = title.ToUpper();        
+            return result.Where(recipe => recipe.Title.ToUpper().Contains(title)).ToList();
+        }
+        //not tested
+        public List<Recipe> GetRecipesWithIngredient(string ingredientTitle)
+        {
+            List<Recipe> result = GetAllRecipe();
+            ingredientTitle = ingredientTitle.ToUpper();
+            return result.Where(recipe => !recipe.Ingredients
+                         .All(ingr => !ingr.Title.ToUpper().Contains(ingredientTitle))).ToList();
         }
         //not tested
         public List<Recipe> GetRecipes(int time)
@@ -1118,15 +1146,6 @@ namespace Cookbook.DataAccess
             return result.Where(recipe => recipe.Ingredients.All(recipeIngr => ingredients.Contains(recipeIngr))).ToList();
         }
         #endregion
-
-        public void AddUnit(string title)
-        {
-            throw new NotImplementedException();
-        }
-
-        
-
-        
-        
+    
     }
 }

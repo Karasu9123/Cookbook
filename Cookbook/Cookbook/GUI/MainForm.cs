@@ -44,8 +44,10 @@ namespace Cookbook.GUI
             db.AddIngredient(4, "Курица", r.Next(135, 210), null);
             db.AddIngredient(5, "Сыр", r.Next(268, 380), null);
             db.AddRecipe(4, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, null);
-            db.AddIngredientToRecipe(1, 2, 1, "Штук");
-            db.AddIngredientToRecipe(1, 4, 2, "Веточек");
+            db.AddUnit("Штук");
+            db.AddUnit("Веточек");
+            db.AddIngredientToRecipe(1, 2, 1, 1);
+            db.AddIngredientToRecipe(1, 4, 2, 2);
 
             Recipe recipe = db.GetRecipe(1);
             var ingredients = new List<Ingredient>() { db.GetIngredient(1), db.GetIngredient(2), db.GetIngredient(3),

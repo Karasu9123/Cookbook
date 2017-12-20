@@ -15,7 +15,7 @@ namespace Cookbook.DataAccess
         void AddRecipe(int recipeCategoryId, string title, string description, string instructions, int time, byte[] picture);
         void AddRecipeWithExistingIngredients(int recipeCategoryId, string title, string description, string instructions,
             int time, byte[] picture, List<Ingredient> ingredients);
-        void AddIngredientToRecipe(int recipeId, int ingredientId, int quantity, string units);//need change
+        void AddIngredientToRecipe(int recipeId, int ingredientId, int quantity, int unitId);
         #endregion
 
         #region Update
@@ -58,6 +58,12 @@ namespace Cookbook.DataAccess
         /// <param name="title">Part of title</param>
         /// <returns></returns>
         List<Recipe> GetRecipes(string title);
+        /// <summary>
+        /// Returns recipes which contains ingredient 
+        /// </summary>
+        /// <param name="ingredientTitle"></param>
+        /// <returns></returns>
+        List<Recipe> GetRecipesWithIngredient(string ingredientTitle);
         /// <summary>
         /// Returns recipes in which the time is less than the argument
         /// /// </summary>
