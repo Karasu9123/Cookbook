@@ -75,30 +75,30 @@
     <Compile Include="DataModel\Category.cs" />
     <Compile Include="DataModel\Recipe.cs" />
     <Compile Include="DataModel\Unit.cs" />
-    <Compile Include="GUI\DataManager.cs">
+    <Compile Include="Forms\DataManager.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\DataManager.Designer.cs">
+    <Compile Include="Forms\DataManager.Designer.cs">
       <DependentUpon>DataManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\Details.cs">
+    <Compile Include="Forms\Details.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\Details.Designer.cs">
+    <Compile Include="Forms\Details.Designer.cs">
       <DependentUpon>Details.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI\MainForm.cs">
+    <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GUI\MainForm.Designer.cs">
+    <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="GUI\Details.resx">
+    <EmbeddedResource Include="Forms\Details.resx">
       <DependentUpon>Details.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUI\MainForm.resx">
+    <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

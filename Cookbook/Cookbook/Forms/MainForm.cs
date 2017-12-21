@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Cookbook.DataModel;
@@ -36,6 +37,7 @@ namespace Cookbook.GUI
             db.AddIngredientCategory("Молочные продукты");
 
             Random r = new Random();
+
             
             db.AddIngredient(1, "Вино", 83, null);
             db.AddIngredient(2, "Мивина", 350, null);
@@ -43,7 +45,11 @@ namespace Cookbook.GUI
             db.AddIngredient(3, "Петрушка", 23, null);
             db.AddIngredient(4, "Курица", r.Next(135, 210), null);
             db.AddIngredient(5, "Сыр", r.Next(268, 380), null);
+            
             db.AddRecipe(4, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, null);
+            db.AddRecipe(4, "Сверхгамбургер", "Пятиэтажный гамбургер", "Пойди купи", 30, null);
+            db.AddRecipe(4, "Жареная картоха", "Вкусняшка из Мака", "Пойди купи", 30, null);
+            db.AddRecipe(4, "Папин борщ", "Лучше не ешь его", "Закрой нос и выкинь", 5, null);
             db.AddUnit("Штук");
             db.AddUnit("Веточек");
             db.AddIngredientToRecipe(1, 2, 1, 1);
@@ -55,12 +61,12 @@ namespace Cookbook.GUI
             var recipes = db.GetRecipesFromIngredients(ingredients);
             #endregion
 
-            listCategoriesOfIngredient.DataSource = db.GetAllIngredientCategory();
+            listIngredientCategories.DataSource = db.GetAllIngredientCategory();
             SetRecipeCategories(db.GetAllRecipeCategory());
 
             fridge.DisplayMember = "Title";
             listIngredients.DisplayMember = "Title";
-            listCategoriesOfIngredient.DisplayMember = "Title";
+            listIngredientCategories.DisplayMember = "Title";
 
             Recipe.DefaultImage = new Bitmap(Properties.Resources.DefaultImage);
         }
@@ -100,7 +106,7 @@ namespace Cookbook.GUI
             {
                 ///Draw "Not Found".
                 var labelNotFound = new Label();
-                labelNotFound.Text = "Recipes are not found";
+                labelNotFound.Text = "Рецептов не найдено.";
                 labelNotFound.Location = new Point(5, 5);
                 labelNotFound.AutoSize = true;
                 tabPageFind.Controls.Add(labelNotFound);
@@ -157,7 +163,7 @@ namespace Cookbook.GUI
                     details.Size = new Size(40, 13);
                     details.Anchor = AnchorStyles.Top | AnchorStyles.Right;
                     details.AutoSize = true;
-                    details.Text = "Details";
+                    details.Text = "Детали";
                     details.Links.Add(0, details.Text.Length, recipe.Id);
                     details.LinkClicked += DetailsLink_Clicked;
 
@@ -219,25 +225,23 @@ namespace Cookbook.GUI
         /// <param name="e"></param>
         private void listIngredientCategories_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listCategoriesOfIngredient.SelectedItem == null)
+            if (listIngredientCategories.SelectedItem == null)
                 return;
 
             listIngredients.Items.Clear();
-            var ingredients = db.GetIngredientsOfCategory((listCategoriesOfIngredient.SelectedItem as Category).Id);
+            var ingredients = db.GetIngredientsOfCategory((listIngredientCategories.SelectedItem as Category).Id);
 
             foreach (var ingredient in ingredients)
             {
                 bool inFridge = fridge.Items.Contains(ingredient);
                 listIngredients.Items.Add(ingredient, inFridge);
             }
-
-            listIngredients.Refresh();
         }
 
 
 
         /// <summary>
-        /// Add/Remove selectedIngredient to/from fridge.
+        /// Add/ClearRecord selectedIngredient to/from fridge.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -265,7 +269,7 @@ namespace Cookbook.GUI
 
 
         /// <summary>
-        /// Remove clicked item from fridge.
+        /// ClearRecord clicked item from fridge.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -284,7 +288,6 @@ namespace Cookbook.GUI
 
             //Delete from fridge.
             fridge.Items.Remove(selectedIngredient);
-            fridge.Refresh();
         }
 
 
@@ -297,7 +300,8 @@ namespace Cookbook.GUI
         private void buttonClear_Click(object sender, EventArgs e)
         {
             fridge.Items.Clear();
-            listIngredients.Items.Clear();
+            foreach (int index in listIngredients.CheckedIndices)
+                listIngredients.SetItemCheckState(index, CheckState.Unchecked);
         }
 
 
@@ -309,18 +313,9 @@ namespace Cookbook.GUI
         /// <param name="e"></param>
         private void buttonFind_Click(object sender, EventArgs e)
         {
-            List<Recipe> recipes = null;
-
-            if (fridge.Items.Count != 0)
-            {
-                var ingredients = new List<Ingredient>();
-
-                foreach (Ingredient item in fridge.Items)
-                    ingredients.Add(item);
-
-                recipes = db.GetRecipesFromIngredients(ingredients);
-            }
-
+            var ingredients = fridge.Items.Cast<Ingredient>().ToList();
+            var recipes = db.GetRecipesFromIngredients(ingredients);
+            
             DrawRecipes(recipes);
         }
 
@@ -333,9 +328,17 @@ namespace Cookbook.GUI
         /// <param name="e"></param>
         private void ButtonSearch_Click(object sender, EventArgs e)
         {
-            var recipes = textBoxSearch.Text != "" ? db.GetRecipes(textBoxSearch.Text) : null;
+            List<Recipe> recipes = null;
+
+            if (textBoxSearch.Text == "")
+                return;
+            else if (radioInTitles.Checked)
+                recipes = db.GetRecipes(textBoxSearch.Text);
+            else if (radioInIngredients.Checked)
+                recipes = db.GetRecipesWithIngredient(textBoxSearch.Text);
+
             DrawRecipes(recipes);
         }
-
+        
     }
 }

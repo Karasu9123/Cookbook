@@ -22,24 +22,24 @@ namespace Cookbook.GUI
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageSelection = new System.Windows.Forms.TabPage();
             this.buttonClear = new System.Windows.Forms.Button();
-            this.labelTime = new System.Windows.Forms.Label();
-            this.trackTime = new System.Windows.Forms.TrackBar();
             this.buttonFind = new System.Windows.Forms.Button();
             this.listIngredients = new System.Windows.Forms.CheckedListBox();
             this.fridge = new System.Windows.Forms.ListBox();
-            this.listCategoriesOfIngredient = new System.Windows.Forms.ListBox();
+            this.listIngredientCategories = new System.Windows.Forms.ListBox();
             this.tabPageFind = new System.Windows.Forms.TabPage();
             this.tabPageCategories = new System.Windows.Forms.TabPage();
             this.tableCategoriesPanel = new System.Windows.Forms.TableLayoutPanel();
             this.labelMain = new System.Windows.Forms.Label();
             this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.buttonSearch = new System.Windows.Forms.Button();
+            this.radioInTitles = new System.Windows.Forms.RadioButton();
+            this.radioInIngredients = new System.Windows.Forms.RadioButton();
             this.tabControl.SuspendLayout();
             this.tabPageSelection.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackTime)).BeginInit();
             this.tabPageCategories.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,48 +63,27 @@ namespace Cookbook.GUI
             this.tabPageSelection.BackColor = System.Drawing.Color.Linen;
             this.tabPageSelection.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.tabPageSelection.Controls.Add(this.buttonClear);
-            this.tabPageSelection.Controls.Add(this.labelTime);
-            this.tabPageSelection.Controls.Add(this.trackTime);
             this.tabPageSelection.Controls.Add(this.buttonFind);
             this.tabPageSelection.Controls.Add(this.listIngredients);
             this.tabPageSelection.Controls.Add(this.fridge);
-            this.tabPageSelection.Controls.Add(this.listCategoriesOfIngredient);
+            this.tabPageSelection.Controls.Add(this.listIngredientCategories);
             this.tabPageSelection.Location = new System.Drawing.Point(4, 22);
             this.tabPageSelection.Name = "tabPageSelection";
             this.tabPageSelection.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageSelection.Size = new System.Drawing.Size(751, 404);
             this.tabPageSelection.TabIndex = 0;
-            this.tabPageSelection.Text = "Selection";
+            this.tabPageSelection.Text = "Ингредиенты";
             // 
             // buttonClear
             // 
             this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClear.Location = new System.Drawing.Point(549, 298);
             this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(57, 23);
+            this.buttonClear.Size = new System.Drawing.Size(64, 23);
             this.buttonClear.TabIndex = 6;
-            this.buttonClear.Text = "Clear";
+            this.buttonClear.Text = "Очистить";
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
-            // 
-            // labelTime
-            // 
-            this.labelTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelTime.AutoSize = true;
-            this.labelTime.Location = new System.Drawing.Point(379, 270);
-            this.labelTime.Name = "labelTime";
-            this.labelTime.Size = new System.Drawing.Size(58, 13);
-            this.labelTime.TabIndex = 5;
-            this.labelTime.Text = "Cook Time";
-            // 
-            // trackTime
-            // 
-            this.trackTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.trackTime.AutoSize = false;
-            this.trackTime.Location = new System.Drawing.Point(209, 261);
-            this.trackTime.Name = "trackTime";
-            this.trackTime.Size = new System.Drawing.Size(164, 45);
-            this.trackTime.TabIndex = 4;
             // 
             // buttonFind
             // 
@@ -113,7 +92,7 @@ namespace Cookbook.GUI
             this.buttonFind.Name = "buttonFind";
             this.buttonFind.Size = new System.Drawing.Size(121, 38);
             this.buttonFind.TabIndex = 3;
-            this.buttonFind.Text = "Find";
+            this.buttonFind.Text = "Найти по выборке";
             this.buttonFind.UseVisualStyleBackColor = true;
             this.buttonFind.Click += new System.EventHandler(this.buttonFind_Click);
             // 
@@ -122,6 +101,7 @@ namespace Cookbook.GUI
             this.listIngredients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.listIngredients.CheckOnClick = true;
             this.listIngredients.FormattingEnabled = true;
             this.listIngredients.Location = new System.Drawing.Point(196, 14);
             this.listIngredients.MultiColumn = true;
@@ -141,27 +121,28 @@ namespace Cookbook.GUI
             this.fridge.TabIndex = 1;
             this.fridge.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listFridge_MouseDoubleClick);
             // 
-            // listCategoriesOfIngredient
+            // listIngredientCategories
             // 
-            this.listCategoriesOfIngredient.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.listIngredientCategories.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.listCategoriesOfIngredient.FormattingEnabled = true;
-            this.listCategoriesOfIngredient.Location = new System.Drawing.Point(8, 6);
-            this.listCategoriesOfIngredient.Name = "listCategoriesOfIngredient";
-            this.listCategoriesOfIngredient.Size = new System.Drawing.Size(182, 342);
-            this.listCategoriesOfIngredient.TabIndex = 0;
-            this.listCategoriesOfIngredient.SelectedIndexChanged += new System.EventHandler(this.listIngredientCategories_SelectedIndexChanged);
+            this.listIngredientCategories.FormattingEnabled = true;
+            this.listIngredientCategories.Location = new System.Drawing.Point(8, 6);
+            this.listIngredientCategories.Name = "listIngredientCategories";
+            this.listIngredientCategories.Size = new System.Drawing.Size(182, 342);
+            this.listIngredientCategories.TabIndex = 0;
+            this.listIngredientCategories.SelectedIndexChanged += new System.EventHandler(this.listIngredientCategories_SelectedIndexChanged);
             // 
             // tabPageFind
             // 
             this.tabPageFind.AutoScroll = true;
             this.tabPageFind.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.tabPageFind.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.tabPageFind.Location = new System.Drawing.Point(4, 22);
             this.tabPageFind.Name = "tabPageFind";
             this.tabPageFind.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageFind.Size = new System.Drawing.Size(751, 404);
             this.tabPageFind.TabIndex = 1;
-            this.tabPageFind.Text = "Find";
+            this.tabPageFind.Text = "Рецепты";
             this.tabPageFind.UseVisualStyleBackColor = true;
             // 
             // tabPageCategories
@@ -172,7 +153,7 @@ namespace Cookbook.GUI
             this.tabPageCategories.Name = "tabPageCategories";
             this.tabPageCategories.Size = new System.Drawing.Size(751, 404);
             this.tabPageCategories.TabIndex = 2;
-            this.tabPageCategories.Text = "Recipe Categories";
+            this.tabPageCategories.Text = "Категории рецептов";
             this.tabPageCategories.UseVisualStyleBackColor = true;
             // 
             // tableCategoriesPanel
@@ -209,9 +190,9 @@ namespace Cookbook.GUI
             this.labelMain.Font = new System.Drawing.Font("Segoe Print", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelMain.Location = new System.Drawing.Point(9, 9);
             this.labelMain.Name = "labelMain";
-            this.labelMain.Size = new System.Drawing.Size(186, 33);
+            this.labelMain.Size = new System.Drawing.Size(176, 33);
             this.labelMain.TabIndex = 2;
-            this.labelMain.Text = "Are you hungry?)";
+            this.labelMain.Text = "Проголодались?)";
             // 
             // textBoxSearch
             // 
@@ -229,9 +210,31 @@ namespace Cookbook.GUI
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(71, 20);
             this.buttonSearch.TabIndex = 4;
-            this.buttonSearch.Text = "Search";
+            this.buttonSearch.Text = "Поиск";
             this.buttonSearch.UseVisualStyleBackColor = true;
             this.buttonSearch.Click += new System.EventHandler(this.ButtonSearch_Click);
+            // 
+            // radioInTitles
+            // 
+            this.radioInTitles.AutoSize = true;
+            this.radioInTitles.Checked = true;
+            this.radioInTitles.Location = new System.Drawing.Point(558, 47);
+            this.radioInTitles.Name = "radioInTitles";
+            this.radioInTitles.Size = new System.Drawing.Size(88, 17);
+            this.radioInTitles.TabIndex = 7;
+            this.radioInTitles.TabStop = true;
+            this.radioInTitles.Text = "В названиях";
+            this.radioInTitles.UseVisualStyleBackColor = true;
+            // 
+            // radioInIngredients
+            // 
+            this.radioInIngredients.AutoSize = true;
+            this.radioInIngredients.Location = new System.Drawing.Point(448, 47);
+            this.radioInIngredients.Name = "radioInIngredients";
+            this.radioInIngredients.Size = new System.Drawing.Size(104, 17);
+            this.radioInIngredients.TabIndex = 8;
+            this.radioInIngredients.Text = "В ингредиентах";
+            this.radioInIngredients.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -239,25 +242,24 @@ namespace Cookbook.GUI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Linen;
             this.ClientSize = new System.Drawing.Size(764, 489);
+            this.Controls.Add(this.radioInIngredients);
+            this.Controls.Add(this.radioInTitles);
             this.Controls.Add(this.buttonSearch);
             this.Controls.Add(this.textBoxSearch);
             this.Controls.Add(this.labelMain);
             this.Controls.Add(this.tabControl);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(671, 400);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Cookbook";
             this.tabControl.ResumeLayout(false);
             this.tabPageSelection.ResumeLayout(false);
-            this.tabPageSelection.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackTime)).EndInit();
             this.tabPageCategories.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
-
-        private TabControl tabControl;
         private TabPage tabPageSelection;
         private Label labelMain;
         private TextBox textBoxSearch;
@@ -266,12 +268,13 @@ namespace Cookbook.GUI
         private Button buttonFind;
         private CheckedListBox listIngredients;
         private ListBox fridge;
-        private ListBox listCategoriesOfIngredient;
-        private Label labelTime;
-        private TrackBar trackTime;
+        private ListBox listIngredientCategories;
         private TableLayoutPanel tableCategoriesPanel;
         private Button buttonClear;
         private TabPage tabPageFind;
+        private TabControl tabControl;
+        private RadioButton radioInTitles;
+        private RadioButton radioInIngredients;
     }
 }
 

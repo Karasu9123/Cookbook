@@ -55,6 +55,7 @@ namespace Cookbook.GUI
                 buttonRecipe.Dock = DockStyle.Fill;
                 buttonRecipe.AutoEllipsis = true;
                 buttonRecipe.Text = recipe.Title;
+                buttonRecipe.Click += ButtonRecipe_Click;
 
                 buttonExit.BackColor = Color.Tomato;
                 buttonExit.FlatStyle = FlatStyle.Popup;
@@ -76,12 +77,12 @@ namespace Cookbook.GUI
         private void ButtonExit_Click(object sender, EventArgs e)
         {
             var record = records.Single(i => i.Exit == (sender as Button));
-            Remove(record);
+            ClearRecord(record);
             records.Remove(record);
         }
 
 
-        private void Remove(Record record)
+        private void ClearRecord(Record record)
         {
             if (!records.Contains(record))
                 return;
@@ -98,7 +99,7 @@ namespace Cookbook.GUI
         {
             currentId = (sender as ButtonRecipe).RecipeId;
             var recipe = db.GetRecipe(currentId);
-            
+
             Display(recipe);
         }
 
@@ -107,7 +108,7 @@ namespace Cookbook.GUI
         {
             string ingredients = "<ul>";
             foreach (var ingredient in recipe.Ingredients)
-                ingredients += "<li>" + ingredient.Title + "</li>";
+                ingredients += "<li>" + ingredient.Title + " — <b>" + ingredient.Quantity + " " + ingredient.Unit.Title + "</b>" + "</li>";
             ingredients += "</ul>";
 
             webBrowser.DocumentText = @"<!DOCTYPE html>
@@ -128,7 +129,7 @@ namespace Cookbook.GUI
                                             <body>
                                                 <h1 align=""center"">" + recipe.Title + @"</h1>
 
-                                                <div> <strong> Category: </strong> "
+                                                <div> <strong> Категория: </strong> "
                                                     + recipe.Category.Title + @".</div>
 
                                                 <div><p>
@@ -138,10 +139,10 @@ namespace Cookbook.GUI
                                                 <p>"
                                                     + recipe.Description + @".</p>
 
-                                                <h3> Ingredients: </h3>"
+                                                <h3> Ингредиенты: </h3>"
                                                 + ingredients +
 
-                                                @"<h3 align=""center""> Instruction: </h3>
+                                                @"<h3 align=""center""> Инструкция приготовления: </h3>
                                                 <div>" + recipe.Instruction + @"</div>
                                             </body>
      
@@ -149,11 +150,13 @@ namespace Cookbook.GUI
                                         </html> ";
         }
 
+
         private void buttonClear_Click(object sender, EventArgs e)
         {
-            records.ForEach(i => Remove(i));
+            records.ForEach(i => ClearRecord(i));
             records.Clear();
             webBrowser.DocumentText = "";
         }
+        
     }
 }

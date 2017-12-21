@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Details));
             this.webBrowser = new System.Windows.Forms.WebBrowser();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.buttonClear = new System.Windows.Forms.Button();
@@ -56,10 +57,11 @@
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 164F));
             this.tableLayoutPanel.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
-            this.tableLayoutPanel.RowCount = 2;
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            this.tableLayoutPanel.Size = new System.Drawing.Size(184, 348);
+            this.tableLayoutPanel.RowCount = 1;
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel.Size = new System.Drawing.Size(184, 0);
             this.tableLayoutPanel.TabIndex = 2;
             // 
             // buttonClear
@@ -70,7 +72,7 @@
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(176, 23);
             this.buttonClear.TabIndex = 3;
-            this.buttonClear.Text = "Clear";
+            this.buttonClear.Text = "Очистить";
             this.buttonClear.UseVisualStyleBackColor = true;
             this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
@@ -108,10 +110,11 @@
             this.Controls.Add(this.panelBrowser);
             this.Controls.Add(this.panelRecipes);
             this.Controls.Add(this.buttonClear);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(580, 435);
             this.Name = "Details";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Details";
+            this.Text = "Детали";
             this.panelRecipes.ResumeLayout(false);
             this.panelRecipes.PerformLayout();
             this.panelBrowser.ResumeLayout(false);
