@@ -704,7 +704,7 @@ namespace Cookbook.DataAccess
             return result;
         }
 
-        public List<Unit> GetAllUnit(int id)
+        public List<Unit> GetAllUnit()
         {
             List<Unit> result = new List<Unit>();
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
@@ -726,6 +726,37 @@ namespace Cookbook.DataAccess
                                 Title = reader.GetString(reader.GetOrdinal("Title"))
                             };
                             result.Add(unit);
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return result;
+        }
+
+        public Unit GetUnit(int id)
+        {
+            Unit result = null;
+            SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
+            using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
+            {
+                connection.ConnectionString = _connectionString;
+                connection.Open();
+
+                using (SQLiteCommand cmd = new SQLiteCommand(connection))
+                {
+                    cmd.CommandText = @"SELECT Id, Title FROM Units
+										WHERE Id = @id;";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            result = new Unit
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Title = reader.GetString(reader.GetOrdinal("Title"))
+                            };
                         }
                     }
                 }

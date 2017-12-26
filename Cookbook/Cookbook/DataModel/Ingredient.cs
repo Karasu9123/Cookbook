@@ -15,7 +15,7 @@ namespace Cookbook.DataModel
 
         public Image GetImage()
         {
-            return (Bitmap)((new ImageConverter()).ConvertFrom(Picture));
+            return Picture != null ? (Bitmap)((new ImageConverter()).ConvertFrom(Picture)) : Properties.Resources.DefaultImage;
         }
 
         public bool Equals(Ingredient otherIngredient)

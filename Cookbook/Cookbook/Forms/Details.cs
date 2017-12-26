@@ -97,6 +97,9 @@ namespace Cookbook.GUI
 
         private void ButtonRecipe_Click(object sender, EventArgs e)
         {
+            if (currentId == (sender as ButtonRecipe).RecipeId)
+                return;
+
             currentId = (sender as ButtonRecipe).RecipeId;
             var recipe = db.GetRecipe(currentId);
 

@@ -216,6 +216,7 @@ namespace Cookbook.GUI
             // 
             // radioInTitles
             // 
+            this.radioInTitles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioInTitles.AutoSize = true;
             this.radioInTitles.Checked = true;
             this.radioInTitles.Location = new System.Drawing.Point(558, 47);
@@ -228,6 +229,7 @@ namespace Cookbook.GUI
             // 
             // radioInIngredients
             // 
+            this.radioInIngredients.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioInIngredients.AutoSize = true;
             this.radioInIngredients.Location = new System.Drawing.Point(448, 47);
             this.radioInIngredients.Name = "radioInIngredients";

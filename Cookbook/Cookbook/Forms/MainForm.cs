@@ -68,7 +68,7 @@ namespace Cookbook.GUI
             listIngredients.DisplayMember = "Title";
             listIngredientCategories.DisplayMember = "Title";
 
-            Recipe.DefaultImage = new Bitmap(Properties.Resources.DefaultImage);
+            Recipe.DefaultImage = Properties.Resources.DefaultImage;
         }
 
 

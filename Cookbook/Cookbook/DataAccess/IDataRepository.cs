@@ -41,7 +41,8 @@ namespace Cookbook.DataAccess
         List<Category> GetAllIngredientCategory();
         Category GetRecipeCategory(int id);
         Category GetIngredientCategory(int id);
-        List<Unit> GetAllUnit(int id);
+        List<Unit> GetAllUnit();
+        Unit GetUnit(int id);
         Ingredient GetIngredient(int id);
         /// <summary>
         /// Returns ingredients that have an argument in the title
