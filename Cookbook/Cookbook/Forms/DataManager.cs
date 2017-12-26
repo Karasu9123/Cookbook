@@ -1135,8 +1135,8 @@ namespace Cookbook.GUI
             if (curAction != Action.Create)
                 linkDataAction.Links[0].LinkData = id;
 
-            linkDataAction.Size = new Size(linkDataAction.PreferredWidth, linkDataAction.PreferredHeight + 35);
-            linkDataAction.Left = panel.Width - linkDataAction.Width - 30;
+            linkDataAction.Size = new Size(linkDataAction.PreferredWidth, linkDataAction.PreferredHeight);
+            linkDataAction.Location = new Point(panel.Width - linkDataAction.Width - 30, panel.Height - linkDataAction.Height - 30);
 
         }
 
