@@ -16,6 +16,7 @@ namespace Cookbook.GUI
         string dbPath = Path.GetDirectoryName(Path.GetDirectoryName(Application.StartupPath)) + @"\";
         IDataRepository db;
         Details details = null;
+        DataManager manager = null;
 
         public MainForm()
         {
@@ -25,40 +26,51 @@ namespace Cookbook.GUI
 
             #region Test data
             db.CreateDataBase();
-            db.AddRecipeCategory("Жареные блюда");
-            db.AddRecipeCategory("Вегетарианские блюда");
-            db.AddRecipeCategory("Мясные блюда");
-            db.AddRecipeCategory("Фастфуд");
+            db.AddRecipeCategory("Первые блюда");
+            db.AddRecipeCategory("Вторые блюда");
+            db.AddRecipeCategory("Закуски");
+            db.AddRecipeCategory("Салаты");
+            db.AddRecipeCategory("Соусы, кремы");
+            db.AddRecipeCategory("Напитки");
+            db.AddRecipeCategory("Десерты");
+            db.AddRecipeCategory("Выпечка");
 
-            db.AddIngredientCategory("Алкоголь");
-            db.AddIngredientCategory("Фастфуд");
-            db.AddIngredientCategory("Овощи");
-            db.AddIngredientCategory("Мясо");
+            db.AddIngredientCategory("Грибы");
+            db.AddIngredientCategory("Зелень, травы");
+            db.AddIngredientCategory("Зерновые, крупы");
+            db.AddIngredientCategory("Консервированые продукты");
+            db.AddIngredientCategory("Макароны");
             db.AddIngredientCategory("Молочные продукты");
+            db.AddIngredientCategory("Мука и мучные изделия");
+            db.AddIngredientCategory("Мясо и мясная продукция");
+            db.AddIngredientCategory("Напитки");
+            db.AddIngredientCategory("Овощи, бобовые");
+            db.AddIngredientCategory("Орехи, семечки, сухофрукты");
+            db.AddIngredientCategory("Приправы, специи");
+            db.AddIngredientCategory("Птица");
+            db.AddIngredientCategory("Рыба и морепродукты");
+            db.AddIngredientCategory("Соусы");
+            db.AddIngredientCategory("Фрукты и ягоды");
 
             Random r = new Random();
 
+            db.AddIngredient(9, "Вино", 83, null);
+            db.AddIngredient(5, "Мивина", 350, null);
+            db.AddIngredient(10, "Огурцы", 15, null);
+            db.AddIngredient(2, "Петрушка", 23, null);
+            db.AddIngredient(13, "Курица", r.Next(135, 210), null);
+            db.AddIngredient(6, "Сыр", r.Next(268, 380), null);
             
-            db.AddIngredient(1, "Вино", 83, null);
-            db.AddIngredient(2, "Мивина", 350, null);
-            db.AddIngredient(3, "Огурцы", 15, null);
-            db.AddIngredient(3, "Петрушка", 23, null);
-            db.AddIngredient(4, "Курица", r.Next(135, 210), null);
-            db.AddIngredient(5, "Сыр", r.Next(268, 380), null);
-            
-            db.AddRecipe(4, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, null);
-            db.AddRecipe(4, "Сверхгамбургер", "Пятиэтажный гамбургер", "Пойди купи", 30, null);
-            db.AddRecipe(4, "Жареная картоха", "Вкусняшка из Мака", "Пойди купи", 30, null);
-            db.AddRecipe(4, "Папин борщ", "Лучше не ешь его", "Закрой нос и выкинь", 5, null);
+            db.AddRecipe(2, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, null);
+            db.AddRecipe(3, "Сверхгамбургер", "Пятиэтажный гамбургер", "Пойди купи", 30, null);
+            db.AddRecipe(1, "Жареная картошка", "Вкусняшка из Мака", "Пойди купи", 30, null);
             db.AddUnit("Штук");
             db.AddUnit("Веточек");
+            db.AddUnit("Литров");
+            db.AddUnit("Грамм");
+            db.AddUnit("Килограмм");
             db.AddIngredientToRecipe(1, 2, 1, 1);
             db.AddIngredientToRecipe(1, 4, 2, 2);
-
-            Recipe recipe = db.GetRecipe(1);
-            var ingredients = new List<Ingredient>() { db.GetIngredient(1), db.GetIngredient(2), db.GetIngredient(3),
-                                                       db.GetIngredient(4), db.GetIngredient(5), db.GetIngredient(6)};
-            var recipes = db.GetRecipesFromIngredients(ingredients);
             #endregion
 
             listIngredientCategories.DataSource = db.GetAllIngredientCategory();
@@ -339,6 +351,12 @@ namespace Cookbook.GUI
 
             DrawRecipes(recipes);
         }
-        
+
+        private void buttonManager_Click(object sender, EventArgs e)
+        {
+            if (manager == null || manager.IsDisposed)
+                manager = new DataManager(db);
+            manager.Show();
+        }
     }
 }

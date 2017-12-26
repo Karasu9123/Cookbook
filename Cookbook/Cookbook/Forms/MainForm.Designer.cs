@@ -38,6 +38,7 @@ namespace Cookbook.GUI
             this.buttonSearch = new System.Windows.Forms.Button();
             this.radioInTitles = new System.Windows.Forms.RadioButton();
             this.radioInIngredients = new System.Windows.Forms.RadioButton();
+            this.buttonManager = new System.Windows.Forms.Button();
             this.tabControl.SuspendLayout();
             this.tabPageSelection.SuspendLayout();
             this.tabPageCategories.SuspendLayout();
@@ -200,13 +201,13 @@ namespace Cookbook.GUI
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxSearch.Location = new System.Drawing.Point(205, 21);
             this.textBoxSearch.Name = "textBoxSearch";
-            this.textBoxSearch.Size = new System.Drawing.Size(449, 20);
+            this.textBoxSearch.Size = new System.Drawing.Size(347, 20);
             this.textBoxSearch.TabIndex = 3;
             // 
             // buttonSearch
             // 
             this.buttonSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSearch.Location = new System.Drawing.Point(670, 21);
+            this.buttonSearch.Location = new System.Drawing.Point(558, 21);
             this.buttonSearch.Name = "buttonSearch";
             this.buttonSearch.Size = new System.Drawing.Size(71, 20);
             this.buttonSearch.TabIndex = 4;
@@ -219,7 +220,7 @@ namespace Cookbook.GUI
             this.radioInTitles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioInTitles.AutoSize = true;
             this.radioInTitles.Checked = true;
-            this.radioInTitles.Location = new System.Drawing.Point(558, 47);
+            this.radioInTitles.Location = new System.Drawing.Point(464, 47);
             this.radioInTitles.Name = "radioInTitles";
             this.radioInTitles.Size = new System.Drawing.Size(88, 17);
             this.radioInTitles.TabIndex = 7;
@@ -231,12 +232,22 @@ namespace Cookbook.GUI
             // 
             this.radioInIngredients.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.radioInIngredients.AutoSize = true;
-            this.radioInIngredients.Location = new System.Drawing.Point(448, 47);
+            this.radioInIngredients.Location = new System.Drawing.Point(341, 47);
             this.radioInIngredients.Name = "radioInIngredients";
             this.radioInIngredients.Size = new System.Drawing.Size(104, 17);
             this.radioInIngredients.TabIndex = 8;
             this.radioInIngredients.Text = "В ингредиентах";
             this.radioInIngredients.UseVisualStyleBackColor = true;
+            // 
+            // buttonManager
+            // 
+            this.buttonManager.Location = new System.Drawing.Point(638, 21);
+            this.buttonManager.Name = "buttonManager";
+            this.buttonManager.Size = new System.Drawing.Size(114, 21);
+            this.buttonManager.TabIndex = 9;
+            this.buttonManager.Text = "Менеджер";
+            this.buttonManager.UseVisualStyleBackColor = true;
+            this.buttonManager.Click += new System.EventHandler(this.buttonManager_Click);
             // 
             // MainForm
             // 
@@ -244,6 +255,7 @@ namespace Cookbook.GUI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Linen;
             this.ClientSize = new System.Drawing.Size(764, 489);
+            this.Controls.Add(this.buttonManager);
             this.Controls.Add(this.radioInIngredients);
             this.Controls.Add(this.radioInTitles);
             this.Controls.Add(this.buttonSearch);
@@ -277,6 +289,7 @@ namespace Cookbook.GUI
         private TabControl tabControl;
         private RadioButton radioInTitles;
         private RadioButton radioInIngredients;
+        private Button buttonManager;
     }
 }
 

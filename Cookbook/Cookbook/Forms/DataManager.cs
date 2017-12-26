@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Cookbook.DataModel;
 using Cookbook.DataAccess;
@@ -22,54 +20,14 @@ namespace Cookbook.GUI
         Action curAction;
         bool start;
 
-        string testDB = "TestDB.db3";
-        string dbPath = Path.GetDirectoryName(Path.GetDirectoryName(Application.StartupPath)) + @"\";
         IDataRepository db;
 
-        public DataManager()
+        public DataManager(IDataRepository dataBase)
         {
             InitializeComponent();
             DrawStart();
 
-            db = new DataRepository(dbPath + testDB);
-
-            #region Test data
-            db.CreateDataBase();
-            db.AddRecipeCategory("Жареные блюда");
-            db.AddRecipeCategory("Вегетарианские блюда");
-            db.AddRecipeCategory("Мясные блюда");
-            db.AddRecipeCategory("Фастфуд");
-
-            db.AddIngredientCategory("Алкоголь");
-            db.AddIngredientCategory("Фастфуд");
-            db.AddIngredientCategory("Овощи");
-            db.AddIngredientCategory("Мясо");
-            db.AddIngredientCategory("Молочные продукты");
-
-            Random r = new Random();
-
-
-            db.AddIngredient(1, "Вино", 83, null);
-            db.AddIngredient(2, "Мивина", 350, null);
-            db.AddIngredient(3, "Огурцы", 15, null);
-            db.AddIngredient(3, "Петрушка", 23, null);
-            db.AddIngredient(4, "Курица", r.Next(135, 210), null);
-            db.AddIngredient(5, "Сыр", r.Next(268, 380), null);
-
-            db.AddRecipe(4, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, null);
-            db.AddRecipe(4, "Сверхгамбургер", "Пятиэтажный гамбургер", "Пойди купи", 30, null);
-            db.AddRecipe(4, "Жареная картоха", "Вкусняшка из Мака", "Пойди купи", 30, null);
-            db.AddRecipe(4, "Папин борщ", "Лучше не ешь его", "Закрой нос и выкинь", 5, null);
-            db.AddUnit("Штук");
-            db.AddUnit("Веточек");
-            db.AddIngredientToRecipe(1, 2, 1, 1);
-            db.AddIngredientToRecipe(1, 4, 2, 2);
-
-            Recipe recipe = db.GetRecipe(1);
-            var ingredients = new List<Ingredient>() { db.GetIngredient(1), db.GetIngredient(2), db.GetIngredient(3),
-                                                       db.GetIngredient(4), db.GetIngredient(5), db.GetIngredient(6)};
-            var recipes = db.GetRecipesFromIngredients(ingredients);
-            #endregion
+            db = dataBase;
 
             Recipe.DefaultImage = Properties.Resources.DefaultImage;
         }
@@ -592,6 +550,8 @@ namespace Cookbook.GUI
             pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox.Enabled = (curAction == Action.Create || curAction == Action.Edit ? true : false);
             pictureBox.Name = "pictureBox";
+            if (curAction == Action.Edit || curAction == Action.Create)
+                pictureBox.Click += ReadPicture;
             // 
             // labelTitle
             // 
@@ -835,6 +795,8 @@ namespace Cookbook.GUI
             pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox.Enabled = (curAction == Action.Create || curAction == Action.Edit ? true : false);
             pictureBox.Name = "pictureBox";
+            if (curAction == Action.Edit || curAction == Action.Create)
+                pictureBox.Click += ReadPicture;
             // 
             // labelTitle
             // 
@@ -1159,6 +1121,24 @@ namespace Cookbook.GUI
                 case CurrentModels.Units:
                     ButtonUnits_Click(null, EventArgs.Empty);
                     break;
+            }
+        }
+
+        private void ReadPicture(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image Files(*.BMP;*.JPG;*.PNG)|*.BMP;*.JPG;*.PNG";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    (sender as PictureBox).Image = Image.FromFile(openFileDialog.FileName, true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: Could not read image from disk. Original error: " + ex.Message);
+                }
             }
         }
 
