@@ -1,4 +1,4 @@
-﻿namespace Cookbook.GUI
+﻿namespace Cookbook.Forms
 {
     partial class DataManager
     {
@@ -28,17 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.SuspendLayout();
-            // 
-            // flowLayoutPanel1
-            // 
-            this.flowLayoutPanel1.BackColor = System.Drawing.Color.Gainsboro;
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(762, 471);
-            this.flowLayoutPanel1.TabIndex = 0;
             // 
             // DataManager
             // 
@@ -46,8 +36,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(762, 471);
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.ClientSize = new System.Drawing.Size(458, 325);
             this.Name = "DataManager";
             this.Text = "Менеджер";
             this.ResumeLayout(false);
@@ -55,7 +44,5 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }

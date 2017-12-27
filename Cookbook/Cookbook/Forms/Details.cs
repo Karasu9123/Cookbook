@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using Cookbook.DataModel;
 using Cookbook.DataAccess;
 
-namespace Cookbook.GUI
+namespace Cookbook.Forms
 {
     public partial class Details : Form
     {

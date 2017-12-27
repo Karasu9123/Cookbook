@@ -238,7 +238,7 @@ namespace Cookbook.DataAccess
                     cmd.ExecuteNonQuery();
 
                     cmd.CommandText = @"SELECT last_insert_rowid();";
-                    int lastRecipeId = (int)cmd.ExecuteScalar();
+                    var lastRecipeId = (long)cmd.ExecuteScalar();
 
                     cmd.CommandText = @"INSERT INTO IngredientRecipe (RecipeId, IngredientId, Quantity, UnitId)
                                         VALUES (@recipeId, @ingredientId, @quantity, @unitId)

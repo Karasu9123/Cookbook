@@ -1,4 +1,4 @@
-﻿namespace Cookbook.GUI
+﻿namespace Cookbook.Forms
 {
     partial class Details
     {

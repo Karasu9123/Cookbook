@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace Cookbook.GUI
+namespace Cookbook.Forms
 {
     partial class MainForm
     {

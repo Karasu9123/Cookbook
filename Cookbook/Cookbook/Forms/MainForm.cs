@@ -7,7 +7,7 @@ using Cookbook.DataAccess;
 using System.IO;
 using System.Drawing;
 
-namespace Cookbook.GUI
+namespace Cookbook.Forms
 {
     public partial class MainForm : Form
     {
