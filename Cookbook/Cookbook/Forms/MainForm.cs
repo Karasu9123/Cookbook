@@ -61,9 +61,9 @@ namespace Cookbook.Forms
             db.AddIngredient(13, "Курица", r.Next(135, 210), null);
             db.AddIngredient(6, "Сыр", r.Next(268, 380), null);
             
-            db.AddRecipe(2, "Мивина с петрушкой", "Просто мивина", "Залей мивину кипятком. Порежь петрушку.", 10, null);
-            db.AddRecipe(3, "Сверхгамбургер", "Пятиэтажный гамбургер", "Пойди купи", 30, null);
-            db.AddRecipe(1, "Жареная картошка", "Вкусняшка из Мака", "Пойди купи", 30, null);
+            db.AddRecipe(2, "Мивина с петрушкой", "Просто мивина", @"<p contenteditable=""false"">Залей мивину кипятком. Порежь петрушку.</p>", 10, null);
+            db.AddRecipe(3, "Сверхгамбургер", "Пятиэтажный гамбургер", @"<p contenteditable=""false"">Пойди купи</p>", 30, null);
+            db.AddRecipe(1, "Жареная картошка", "Вкусняшка из Мака", @"<p contenteditable=""false"">Пойди купи</p>", 30, null);
             db.AddUnit("Штук");
             db.AddUnit("Веточек");
             db.AddUnit("Литров");

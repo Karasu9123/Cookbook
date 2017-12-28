@@ -701,6 +701,23 @@ namespace Cookbook.Forms
             browserInstruction.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
             browserInstruction.Size = new Size(panelInstruction.Width - 150, 800);
             browserInstruction.Location = new Point(70, labelInstruction.Bottom + 30);
+
+            if (curAction == Action.Create)
+            {
+                browserInstruction.DocumentText = @"<p contenteditable=""true""> </p>";
+            }
+            else 
+            {
+                browserInstruction.DocumentText = recipe.Instruction;
+
+                if (curAction == Action.Edit)
+                {
+                    int IndexFirst = browserInstruction.DocumentText.IndexOf("false");
+                    browserInstruction.DocumentText = browserInstruction.DocumentText.Remove(IndexFirst, "false".Length).Insert(IndexFirst, "true");
+                }
+            }
+
+            browserInstruction.ScrollBarsEnabled = true;
             browserInstruction.Name = "browserInstruction";
 
 
@@ -1303,9 +1320,11 @@ namespace Cookbook.Forms
                 var time = (int)(Controls.Find("numericTime", true)[0] as NumericUpDown).Value;
                 var pictureBox = Controls.Find("pictureBox", true)[0] as PictureBox;
                 var tableIngredients = Controls.Find("tableIngredients", true)[0] as TableLayoutPanel;
-                var browserInstruction = Controls.Find("browserInstruction", true)[0] as WebBrowser;
                 var ingredients = new List<Ingredient>();
-                string instructions = "";
+                string instructions = (Controls.Find("browserInstruction", true)[0] as WebBrowser).DocumentText;
+
+                int IndexFirst = instructions.IndexOf("true");
+                instructions = instructions.Remove(IndexFirst, "true".Length).Insert(IndexFirst, "false");
 
                 if (title == "" || category == null)
                 {
