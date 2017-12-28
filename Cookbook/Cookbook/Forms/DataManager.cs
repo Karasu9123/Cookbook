@@ -18,7 +18,8 @@ namespace Cookbook.Forms
         CurrentModels curModels;
         string curFilter;
         Action curAction;
-        bool start;
+        bool start = false;
+        bool ingredientFormInRecipe = false;
 
         IDataRepository db;
 
@@ -669,7 +670,7 @@ namespace Cookbook.Forms
             if (curAction != Action.Create)
                 foreach (var ingredient in recipe.Ingredients)
                 {
-                    AddIngredientInTable(tableIngredients, ingredient);
+                    AddIngredientInTable(ingredient);
                 }
             //
             // buttonAddIngredient
@@ -718,12 +719,12 @@ namespace Cookbook.Forms
 
             tableIngredients.Controls.Remove(tableIngredients.GetControlFromPosition(0, row));
             tableIngredients.Controls.Remove(tableIngredients.GetControlFromPosition(1, row));
-            tableIngredients.Controls.Remove(sender as Control);
+            tableIngredients.Controls.Remove(tableIngredients.GetControlFromPosition(2, row));
         }
 
         private void EditIngredientInRecipe(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            throw new NotImplementedException();
+            DrawIngredientForm(e.Link.LinkData as Ingredient);
         }
 
         private void AddIngredientToRecipe(object sender, EventArgs e)
@@ -733,6 +734,13 @@ namespace Cookbook.Forms
 
         private void DrawIngredientForm(Ingredient ingredient = null)
         {
+            if (ingredientFormInRecipe)
+            {
+                return;
+            }
+
+            ingredientFormInRecipe = true;
+
             var ingredientForm = new Form();
             var comboBoxIngredients = new ComboBox();
             var numericQuantity = new NumericUpDown();
@@ -741,10 +749,11 @@ namespace Cookbook.Forms
             //
             // ingForm
             //
-            ingredientForm.Size = new Size(400, 350);
+            ingredientForm.Size = new Size(400, 300);
             ingredientForm.FormBorderStyle = FormBorderStyle.Fixed3D;
             ingredientForm.Text = "Выберите все поля";
-            ingredientForm.StartPosition = FormStartPosition.CenterParent;
+            ingredientForm.StartPosition = FormStartPosition.CenterScreen;
+            ingredientForm.FormClosed += (sender, e) => { ingredientFormInRecipe = false; };
             ingredientForm.Controls.Add(comboBoxIngredients);
             ingredientForm.Controls.Add(numericQuantity);
             ingredientForm.Controls.Add(comboBoxUnit);
@@ -760,9 +769,17 @@ namespace Cookbook.Forms
             comboBoxIngredients.Location = new Point(ingredientForm.Width * 3 / 20, 30);
             comboBoxIngredients.Width = ingredientForm.Width * 7 / 10;
 
-            db.GetAllIngredient().ForEach(i => comboBoxIngredients.Items.Add(i));
-            if (ingredient != null)
-                comboBoxIngredients.SelectedItem = comboBoxIngredients.Items.Cast<Category>().Single(i => i.Id == ingredient.Id);
+            if (ingredient == null)
+            {
+                var ingList = db.GetAllIngredient();
+                Controls.Find("labelEdit", true).Cast<LinkLabel>().ToList().ForEach(i => ingList.Remove(i.Links[0].LinkData as Ingredient));
+                ingList.ForEach(i => comboBoxIngredients.Items.Add(i));
+            }
+            else
+            {
+                comboBoxIngredients.Items.Add(ingredient);
+                comboBoxIngredients.SelectedItem = ingredient;
+            }
 
             comboBoxIngredients.DisplayMember = "Title";
             // 
@@ -771,8 +788,9 @@ namespace Cookbook.Forms
             numericQuantity.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             numericQuantity.AutoSize = true;
             numericQuantity.Location = new Point(comboBoxIngredients.Left, comboBoxIngredients.Bottom + 30);
+            numericQuantity.Minimum = 1;
             numericQuantity.Maximum = int.MaxValue;
-            numericQuantity.Value = ingredient == null ? 0 : ingredient.Quantity;
+            numericQuantity.Value = ingredient == null ? 1 : ingredient.Quantity;
             // 
             // comboBoxUnit
             // 
@@ -785,7 +803,7 @@ namespace Cookbook.Forms
 
             db.GetAllUnit().ForEach(i => comboBoxUnit.Items.Add(i));
             if (ingredient != null)
-                comboBoxUnit.SelectedItem = comboBoxUnit.Items.Cast<Category>().Single(i => i.Id == ingredient.Unit.Id);
+                comboBoxUnit.SelectedItem = comboBoxUnit.Items.Cast<Unit>().Single(i => i.Id == ingredient.Unit.Id);
             comboBoxUnit.DisplayMember = "Title";
             // 
             // buttonOk
@@ -793,13 +811,47 @@ namespace Cookbook.Forms
             buttonOK.Text = "OK";
             buttonOK.AutoSize = true;
             buttonOK.Location = new Point(ingredientForm.Width - 110, ingredientForm.Height - 80);
+            buttonOK.Click += (sender, e) => 
+            {
+                if (comboBoxIngredients.SelectedItem == null || comboBoxUnit.SelectedItem == null)
+                {
+                    MessageBox.Show("Все поля должны быть выбраны!", "Некорректные данные", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var ing = comboBoxIngredients.SelectedItem as Ingredient;
+                ing.Quantity = (int)numericQuantity.Value;
+                ing.Unit = comboBoxUnit.SelectedItem as Unit;
+
+                if (ingredient == null)
+                    AddIngredientInTable(ing);
+                else
+                {
+                    var tableIngredients = Controls.Find("tableIngredients", true)[0] as TableLayoutPanel;
+                    var controlInCurRow =  tableIngredients.Controls.Find("labelEdit", true).Cast<LinkLabel>().Single(i => i.Links[0].LinkData == ingredient);
+
+                    DeleteIngredientFromRecipe(controlInCurRow, null);
+                    AddIngredientInTable(ing, tableIngredients.GetRow(controlInCurRow));
+                }
+
+                ingredientForm.Close();
+                ingredientForm.Dispose();
+            };
 
         }
 
-        private void AddIngredientInTable(TableLayoutPanel tableIngredients, Ingredient ingredient)
+
+
+        private void AddIngredientInTable(Ingredient ingredient, int row = -1)
         {
-            tableIngredients.RowCount++;
-            tableIngredients.RowStyles.Add(new RowStyle());
+            var tableIngredients = Controls.Find("tableIngredients", true)[0] as TableLayoutPanel;
+
+            if (row == -1)
+            {
+                tableIngredients.RowCount++;
+                tableIngredients.RowStyles.Add(new RowStyle());
+                row = tableIngredients.RowCount - 1;
+            }
 
             var labelIngredient = new Label();
             // 
@@ -811,7 +863,7 @@ namespace Cookbook.Forms
             labelIngredient.Font = new Font("Times New Roman", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
             labelIngredient.Location = new Point(3, 0);
             labelIngredient.Text = "•  " + ingredient.Title + " — " + ingredient.Quantity + " " + ingredient.Unit.Title;
-            tableIngredients.Controls.Add(labelIngredient, 0, tableIngredients.RowCount - 1);
+            tableIngredients.Controls.Add(labelIngredient, 0, row);
 
             if (curAction == Action.Edit)
             {
@@ -827,7 +879,7 @@ namespace Cookbook.Forms
                 labelEdit.Text = "Изменить";
                 labelEdit.Links[0].LinkData = ingredient;
                 labelEdit.LinkClicked += EditIngredientInRecipe;
-                tableIngredients.Controls.Add(labelEdit, 1, tableIngredients.RowCount - 1);
+                tableIngredients.Controls.Add(labelEdit, 1, row);
                 labelEdit.Name = "labelEdit";
                 // 
                 // labelDelete
@@ -839,7 +891,8 @@ namespace Cookbook.Forms
                 labelDelete.Text = "Удалить";
                 labelDelete.Links[0].LinkData = ingredient.Id;
                 labelDelete.LinkClicked += DeleteIngredientFromRecipe;
-                tableIngredients.Controls.Add(labelDelete, 2, tableIngredients.RowCount - 1);
+                labelDelete.Name = "labelDelete";
+                tableIngredients.Controls.Add(labelDelete, 2, row);
             }
         }
 
